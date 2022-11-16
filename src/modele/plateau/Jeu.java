@@ -27,7 +27,6 @@ public class Jeu {
 
     private Heros hector;
 
-    // cette entite a la position (x, y)
     private HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Entite[][] grilleEntites = new Entite[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
 
@@ -60,8 +59,8 @@ public class Jeu {
 
         Gravite g = new Gravite();
         g.addEntiteDynamique(hector);
-        // gravite ordonnance (chaque temps faire marcher la gravite)
         ordonnanceur.add(g);
+
         Controle4Directions.getInstance().addEntiteDynamique(hector);
         ordonnanceur.add(Controle4Directions.getInstance());
 
