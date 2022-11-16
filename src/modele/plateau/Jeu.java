@@ -13,6 +13,8 @@ import modele.deplacements.Ordonnanceur;
 import java.awt.Point;
 import java.util.HashMap;
 
+import java.util.Scanner;
+
 /** Actuellement, cette classe gère les postions
  * (ajouter conditions de victoire, chargement du plateau, etc.)
  */
@@ -71,6 +73,24 @@ public class Jeu {
 
         addEntite(new Platform(this), 2, 6);
         addEntite(new Platform(this), 3, 6);
+        addEntite(new Corde(this), 4, 5);
+        addEntite(new Corde(this), 4, 6);
+        addEntite(new Corde(this), 4, 7);
+
+        Scanner level = new Scanner("../../Levels/00.txt"); //whatever file is being read
+
+        for (int i=0; i<30; i++)
+        {
+            for (int j=0; j<30; j++)
+            {
+                char nextTile = level.next().charAt(0); //reads the next char
+                switch (nextTile){
+                    
+                }
+            }
+        }
+
+        level.close(); // close the file
     }
 
     private void addEntite(Entite e, int x, int y) {
