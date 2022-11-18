@@ -39,8 +39,14 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon icoPlatform;
     private ImageIcon icoCorde;
 
+    private ImageIcon[] icoBombe = new ImageIcon[4];
+    private int current_sprite_bomb;
 
-    private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
+    private JLabel[][] tabJLabel; // cases graphiques (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
+
+    private JLabel menu_label; // Label en haut
+    private JLabel time_label; // Label droite du menu
+    private JLabel score_label; // Label gauche du menu
 
 
     public VueControleurGyromite(Jeu _jeu) {
@@ -78,32 +84,39 @@ public class VueControleurGyromite extends JFrame implements Observer {
         icoBedrock = chargerIcone("Images/tileset.png", 32, 0, 16, 16);
         icoPlatform = chargerIcone("Images/tileset.png", 0, 0, 16, 16);
         icoCorde = chargerIcone("Images/tileset.png", 16, 0, 16, 16);
+
+        /* SpriteSheet de la bombe */
+        icoBombe[0] = chargerIcone("Images/bomb_ca.png", 0, 0, 64, 64);
+        icoBombe[1] = chargerIcone("Images/bomb_ca.png", 64, 0, 64, 64);
+        icoBombe[2] = chargerIcone("Images/bomb_ca.png", 128, 0, 64, 64);
+        icoBombe[3] = chargerIcone( "Images/bomb_ca.png", 192, 0, 64, 64);
     }
 
     private void placerLesComposantsGraphiques() {
         setTitle("Gyromite");
-        setSize(900, 900);
+        setSize(900, 960);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
 
-        /** Initialization and Add father Panel (father layout) */
+        /* Initialization and Add father Panel (father layout) */
         JPanel centralPanel = new JPanel();
         add(centralPanel);
         centralPanel.setLayout(new BorderLayout());
 
-        /** Initialization of son layouts */
+        /* Initialization of son layouts */
         JComponent barMenu = component_barMenu();
         JComponent grilleJLabels = component_gameBoard(); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
 
-        /** Add son layouts to the father layout */
+        /* Add son layouts to the father layout */
         centralPanel.add(barMenu, BorderLayout.NORTH);
         centralPanel.add(grilleJLabels, BorderLayout.SOUTH);
+
     }
 
     
     /**
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
      */
-    private void mettreAJourAffichage() {
+    private void mettreAJourAffichageJeu() {
 
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
@@ -123,6 +136,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     tabJLabel[x][y].setIcon(icoColonne);
                 } else if (jeu.getGrille()[x][y] instanceof Platform) {
                     tabJLabel[x][y].setIcon(icoPlatform);
+                } else if (jeu.getGrille()[x][y] instanceof Bombe) {
+                    tabJLabel[x][y].setIcon(Sprite_Bombe());
                 } else if (jeu.getGrille()[x][y] instanceof Corde) {
                     tabJLabel[x][y].setIcon(icoCorde);
                 } else {
@@ -132,6 +147,14 @@ public class VueControleurGyromite extends JFrame implements Observer {
         }
     }
 
+    /**
+     * Update the menu layout
+     */
+    private void mettreAJourAffichageMenu() {
+        time_label.setText(String.valueOf(jeu.GetTimeLeft()));
+        score_label.setText(String.valueOf(jeu.GetScore()));
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         //mettreAJourAffichage();
@@ -139,11 +162,15 @@ public class VueControleurGyromite extends JFrame implements Observer {
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        mettreAJourAffichage();
+                        /* Increase time */
+                        jeu.increase_TimeLeft();
+
+                        /* Initialization and Add father Panel (father layout) */
+                        mettreAJourAffichageJeu();
+                        mettreAJourAffichageMenu();
+
                     }
-                }); 
-
-
+                });
     }
 
 
@@ -169,6 +196,11 @@ public class VueControleurGyromite extends JFrame implements Observer {
         return new ImageIcon(bi.getScaledInstance(900/sizeX, 900/sizeY,java.awt.Image.SCALE_SMOOTH));
     }
 
+    private ImageIcon chargerIconeNumber(String urlIcone, int x, int y, int w, int h) {
+        BufferedImage bi = getSubImage(urlIcone, x, y, w, h);
+        return new ImageIcon(bi.getScaledInstance(350/sizeX, 350/sizeY,java.awt.Image.SCALE_SMOOTH));
+    }
+
     private BufferedImage getSubImage(String urlIcone, int x, int y, int w, int h) {
         BufferedImage image = null;
 
@@ -190,12 +222,29 @@ public class VueControleurGyromite extends JFrame implements Observer {
      * @return the JLabel composed of time left and score
      */
     private JLabel component_barMenu() {
-        int time = jeu.GetTimeLeft();
-        int score = jeu.GetScore();
-        String label = "Time Left : " + time + "        " + "Score : " + score ;
+        /* Initialize the Menu label */
+        ImageIcon icon = new ImageIcon("Images/menu.png");
+        menu_label = new JLabel(icon);
+        menu_label.setPreferredSize(new Dimension(sizeX,60));
 
-        JLabel menu = new JLabel(label);
-        return menu;
+        /* Set the menu layout to a GridBagLayout with constraints */
+        menu_label.setLayout(new GridLayout());
+
+        /* Initialize the Score label */
+        score_label = new JLabel(String.valueOf(jeu.GetScore()));
+        score_label.setForeground(Color.white);
+        score_label.setFont(new Font(Font.MONOSPACED, score_label.getFont().getStyle(), 22));
+        score_label.setBorder(BorderFactory.createEmptyBorder(0, 220, 0, 0));
+        menu_label.add(score_label, BorderLayout.CENTER);
+
+        /* Initialize the Time label */
+        time_label = new JLabel(String.valueOf(jeu.GetTimeLeft()));
+        time_label.setFont(new Font(Font.MONOSPACED, score_label.getFont().getStyle(), 22));
+        time_label.setForeground(Color.green);
+        time_label.setBorder(BorderFactory.createEmptyBorder(2, 210, 0, 0));
+        menu_label.add(time_label);
+
+        return menu_label;
     }
 
 
@@ -204,7 +253,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
      * @return the GridLayout composed of JLabel
      */
     private JPanel component_gameBoard() {
-        JPanel grille = new JPanel(new GridLayout(sizeY, sizeX));
+        JPanel grille = new JPanel(new GridLayout(sizeX, sizeY));
+        grille.setPreferredSize(new Dimension(sizeX,900));
 
         tabJLabel = new JLabel[sizeX][sizeY];
         for (int y = 0; y < sizeY; y++) {
@@ -218,4 +268,21 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
         return grille;
     }
+
+
+    private ImageIcon Sprite_Bombe() {
+        ImageIcon next;
+        int current_time = jeu.GetTimeLeft();
+
+        switch (current_sprite_bomb) {
+            case 3 -> current_sprite_bomb = 0;
+            default -> {
+                current_sprite_bomb += 1;
+            }
+        }
+        next = icoBombe[current_sprite_bomb];
+
+        return next;
+    }
+
 }

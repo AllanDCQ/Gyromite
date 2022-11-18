@@ -34,10 +34,18 @@ public class Jeu {
 
     private Ordonnanceur ordonnanceur = new Ordonnanceur(this);
 
-    /** */
-    public int TimeLeft;
 
-    public int Score;
+    /** Time Variables */
+    private int TimeLeft; // Variable of secondes left
+    private int Slepp_ms; // time slepp in ms between each loop
+    private int Time_wait = 0; //
+    private int Score;
+
+    private String entite_ecrase = null;
+
+
+
+
 
     public Jeu() {
 
@@ -53,6 +61,7 @@ public class Jeu {
     }
 
     public void start(long _pause) {
+        Slepp_ms = (int)_pause;
         ordonnanceur.start(_pause);
     }
     
@@ -63,7 +72,7 @@ public class Jeu {
     public Heros getHector() {
         return hector;
     }
-    
+
     private void initialisationDesEntites() {
         hector = new Heros(this);
         addEntite(hector, 2, 1);
@@ -86,6 +95,7 @@ public class Jeu {
         addEntite(new Corde(this), 4, 5);
         addEntite(new Corde(this), 4, 6);
         addEntite(new Corde(this), 4, 7);
+        addEntite(new Bombe(this),10,23);
 
 
         /** J'ai documenté ton code parce qu'il crée une erreur à la ligne 97 , je pense que tu ne l'avais pas fini.
@@ -125,41 +135,76 @@ public class Jeu {
      * Sinon, rien n'est fait.
      */
     public boolean deplacerEntite(Entite e, Direction d) {
-        boolean retour = false;
-        
-        Point pCourant = map.get(e);
-        
-        Point pCible = calculerPointCible(pCourant, d);
-        
-        if (contenuDansGrille(pCible) && objetALaPosition(pCible) == null) { // a adapter (collisions murs, etc.)
-            // compter le déplacement : 1 deplacement horizontal et vertical max par pas de temps par entité
-            switch (d) {
-                case bas:
-                case haut:
-                    if (cmptDeplV.get(e) == null) {
-                        cmptDeplV.put(e, 1);
+            boolean retour = false;
 
-                        retour = true;
-                    }
-                    break;
-                case gauche:
-                case droite:
-                    if (cmptDeplH.get(e) == null) {
-                        cmptDeplH.put(e, 1);
-                        retour = true;
+            Point pCourant = map.get(e);
 
-                    }
-                    break;
+            Point pCible = calculerPointCible(pCourant, d);
+
+            Entite next_entite = objetALaPosition(pCible);
+
+            // Si le heros est sur une entité alors true
+            boolean sur_entite = entite_ecrase != null;
+
+            if (contenuDansGrille(pCible)) { // à adapter (collisions murs, etc.)
+                // compter le déplacement : 1 déplacement horizontal et vertical max par pas de temps par entité
+                switch (d) {
+                    case bas:
+                    case haut:
+                        if (next_entite == null) {
+                            if (cmptDeplV.get(e) == null) {
+                                cmptDeplV.put(e, 1);
+                                retour = true;
+                            }
+                        } else if (next_entite.peutEtreEcrase()) {
+                            if (cmptDeplV.get(e) == null) {
+                                cmptDeplV.put(e, 1);
+                                retour = true;
+                            }
+
+                            entite_ecrase = next_entite.get_class_string();
+                            if(entite_ecrase.equals("Bombe")) {
+                                Score += 100;
+                            }
+                        }
+                        break;
+                    case gauche:
+                    case droite:
+                        if (next_entite == null) {
+                            if (cmptDeplH.get(e) == null) {
+                                cmptDeplH.put(e, 1);
+                                retour = true;
+                            }
+                        } else if (next_entite.peutEtreEcrase()) {
+                            if (cmptDeplH.get(e) == null) {
+                                cmptDeplH.put(e, 1);
+                                retour = true;
+                            }
+                            entite_ecrase = next_entite.get_class_string();
+                            if(entite_ecrase.equals("Bombe")) {
+                                Score += 100;
+                            }
+                        }
+                        break;
+
+                }
             }
-        }
 
-        if (retour) {
-            deplacerEntite(pCourant, pCible, e);
-        }
 
-        return retour;
+            if (retour) {
+                deplacerEntite(pCourant, pCible, e);
+
+                // Si le heros était sur une entité alors on va la remplacer.
+                if (sur_entite){
+                    ReplacerEntite(pCourant,entite_ecrase);
+                    entite_ecrase = null;
+                }
+
+            }
+
+            return retour;
     }
-    
+
     
     private Point calculerPointCible(Point pCourant, Direction d) {
         Point pCible = null;
@@ -179,6 +224,15 @@ public class Jeu {
         grilleEntites[pCourant.x][pCourant.y] = null;
         grilleEntites[pCible.x][pCible.y] = e;
         map.put(e, pCible);
+    }
+
+    private void ReplacerEntite(Point pCourant, String entite) {
+        int x = pCourant.x;
+        int y = pCourant.y;
+
+        if(entite.equals("Corde")) {
+            addEntite(new Corde(this), x, y);
+        }
     }
     
     /** Indique si p est contenu dans la grille
@@ -202,12 +256,28 @@ public class Jeu {
     }
 
 
+    /**
+     * Get the score
+     * @return the player's score
+     */
     public int GetScore() { return Score; }
 
+    /**
+     * Get the time
+     * @return the player's time left in secondes
+     */
     public int GetTimeLeft() { return TimeLeft; }
 
-    public void d_TimeLeft() {
-        TimeLeft = TimeLeft - 1;
+    /**
+     * Increase the variable of the time (TimeLeft) each seconde
+     */
+    public void increase_TimeLeft() {
+        Time_wait += 1;
+
+        if (Time_wait >= 1000/Slepp_ms) {
+            TimeLeft = TimeLeft - 1;
+            Time_wait = 0;
+        }
     }
 
 
