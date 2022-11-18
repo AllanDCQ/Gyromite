@@ -25,6 +25,7 @@ public class Controle4Directions extends RealisateurDeDeplacement {
     public boolean realiserDeplacement() {
         boolean ret = false;
         for (EntiteDynamique e : lstEntitesDynamiques) {
+            Entite eBas = e.regarderDansLaDirection(Direction.bas);
             if (directionCourante != null)
                 switch (directionCourante) {
                     case gauche:
@@ -36,12 +37,19 @@ public class Controle4Directions extends RealisateurDeDeplacement {
                     case haut:
                         // on ne peut pas sauter sans prendre appui
                         // (attention, test d'appui réalisé à partir de la position courante, si la gravité à été appliquée, il ne s'agit pas de la position affichée, amélioration possible)
-                        Entite eBas = e.regarderDansLaDirection(Direction.bas);
                         if (eBas != null && eBas.peutServirDeSupport()) {
                             if (e.avancerDirectionChoisie(Direction.haut))
                                 ret = true;
                         }
                         break;
+                    case bas:
+                        /* Peut descendre si la case du bas a true peutPermettreDeMonterDescendre */
+                        if (eBas.peutPermettreDeMonterDescendre()) {
+                            e.avancerDirectionChoisie(Direction.bas);
+                            ret = true;
+                        }
+                        break;
+
                 }
         }
 

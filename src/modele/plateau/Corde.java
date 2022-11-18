@@ -9,7 +9,7 @@ public class Corde extends EntiteStatique {
     public boolean peutPermettreDeMonterDescendre() { return true; }
 
     @Override
-    public boolean peutEtreEcrase() { return true; }// l'entité peut être traverse (par exemple par heros ou smicks ...)
+    public boolean peutEtreEcrase() { return true; }
 
     @Override
     public String get_class_string() {
