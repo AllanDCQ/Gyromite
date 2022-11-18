@@ -13,6 +13,8 @@ import modele.deplacements.Ordonnanceur;
 import java.awt.Point;
 import java.util.HashMap;
 
+import java.util.Scanner;
+
 /** Actuellement, cette classe gère les postions
  * (ajouter conditions de victoire, chargement du plateau, etc.)
  */
@@ -75,19 +77,35 @@ public class Jeu {
         ordonnanceur.add(Controle4Directions.getInstance());
 
         // murs extérieurs horizontaux
-        for (int x = 0; x < 20; x++) {
-            addEntite(new Mur(this), x, 0);
-            addEntite(new Mur(this), x, 9);
+        for (int x = 0; x < SIZE_X; x++) {
+            addEntite(new Mur(this), x, SIZE_Y-1);
         }
 
-        // murs extérieurs verticaux
-        for (int y = 1; y < 9; y++) {
-            addEntite(new Mur(this), 0, y);
-            addEntite(new Mur(this), 19, y);
+        addEntite(new Platform(this), 2, 6);
+        addEntite(new Platform(this), 3, 6);
+        addEntite(new Corde(this), 4, 5);
+        addEntite(new Corde(this), 4, 6);
+        addEntite(new Corde(this), 4, 7);
+
+
+        /** J'ai documenté ton code parce qu'il crée une erreur à la ligne 97 , je pense que tu ne l'avais pas fini.
+
+        Scanner level = new Scanner("../../Levels/00.txt"); //whatever file is being read
+
+        for (int i=0; i<30; i++)
+        {
+            for (int j=0; j<30; j++)
+            {
+                char nextTile = level.next().charAt(0); //reads the next char
+                switch (nextTile){
+
+                }
+            }
         }
 
-        addEntite(new Mur(this), 2, 6);
-        addEntite(new Mur(this), 3, 6);
+        level.close(); // close the file
+
+         **/
     }
 
     private void addEntite(Entite e, int x, int y) {
