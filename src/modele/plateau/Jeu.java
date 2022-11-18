@@ -18,8 +18,8 @@ import java.util.HashMap;
  */
 public class Jeu {
 
-    public static final int SIZE_X = 20;
-    public static final int SIZE_Y = 10;
+    public static final int SIZE_X = 25;
+    public static final int SIZE_Y = 25;
 
     // compteur de déplacements horizontal et vertical (1 max par défaut, à chaque pas de temps)
     private HashMap<Entite, Integer> cmptDeplH = new HashMap<Entite, Integer>();
@@ -32,8 +32,17 @@ public class Jeu {
 
     private Ordonnanceur ordonnanceur = new Ordonnanceur(this);
 
+    /** */
+    public int TimeLeft;
+
+    public int Score;
+
     public Jeu() {
+
         initialisationDesEntites();
+        TimeLeft = 1000;
+        Score = 0;
+
     }
 
     public void resetCmptDepl() {
@@ -56,6 +65,7 @@ public class Jeu {
     private void initialisationDesEntites() {
         hector = new Heros(this);
         addEntite(hector, 2, 1);
+
 
         Gravite g = new Gravite();
         g.addEntiteDynamique(hector);
@@ -85,7 +95,7 @@ public class Jeu {
         map.put(e, new Point(x, y));
     }
     
-    /** Permet par exemple a une entité  de percevoir sont environnement proche et de définir sa stratégie de déplacement
+    /** Permet par exemple a une entité de percevoir sont environnement proche et de définir sa stratégie de déplacement
      *
      */
     public Entite regarderDansLaDirection(Entite e, Direction d) {
@@ -172,4 +182,16 @@ public class Jeu {
     public Ordonnanceur getOrdonnanceur() {
         return ordonnanceur;
     }
+
+
+    public int GetScore() { return Score; }
+
+    public int GetTimeLeft() { return TimeLeft; }
+
+    public void d_TimeLeft() {
+        TimeLeft = TimeLeft - 1;
+    }
+
+
+
 }

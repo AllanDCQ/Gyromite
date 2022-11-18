@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import modele.deplacements.Controle4Directions;
 import modele.deplacements.Direction;
@@ -75,22 +76,21 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     private void placerLesComposantsGraphiques() {
         setTitle("Gyromite");
-        setSize(400, 250);
+        setSize(900, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
 
-        JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
+        /** Initialization and Add father Panel (father layout) */
+        JPanel centralPanel = new JPanel();
+        add(centralPanel);
+        centralPanel.setLayout(new BorderLayout());
 
-        tabJLabel = new JLabel[sizeX][sizeY];
+        /** Initialization of son layouts */
+        JComponent barMenu = component_barMenu();
+        JComponent grilleJLabels = component_gameBoard(); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
 
-        for (int y = 0; y < sizeY; y++) {
-            for (int x = 0; x < sizeX; x++) {
-                JLabel jlab = new JLabel();
-
-                tabJLabel[x][y] = jlab; // on conserve les cases graphiques dans tabJLabel pour avoir un accès pratique à celles-ci (voir mettreAJourAffichage() )
-                grilleJLabels.add(jlab);
-            }
-        }
-        add(grilleJLabels);
+        /** Add son layouts to the father layout */
+        centralPanel.add(barMenu, BorderLayout.NORTH);
+        centralPanel.add(grilleJLabels, BorderLayout.SOUTH);
     }
 
     
@@ -125,15 +125,15 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        mettreAJourAffichage();
-        /*
+        //mettreAJourAffichage();
+
         SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         mettreAJourAffichage();
                     }
                 }); 
-        */
+
 
     }
 
@@ -158,7 +158,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
         // charger une sous partie de l'image à partir de ses coordonnées dans urlIcone
         BufferedImage bi = getSubImage(urlIcone, x, y, w, h);
         // adapter la taille de l'image a la taille du composant (ici : 20x20)
-        return new ImageIcon(bi.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
+        return new ImageIcon(bi.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
     }
 
     private BufferedImage getSubImage(String urlIcone, int x, int y, int w, int h) {
@@ -174,4 +174,40 @@ public class VueControleurGyromite extends JFrame implements Observer {
         return bi;
     }
 
+
+
+
+    /**
+     * Initialize the menu
+     * @return the JLabel composed of time left and score
+     */
+    private JLabel component_barMenu() {
+        int time = jeu.GetTimeLeft();
+        int score = jeu.GetScore();
+        String label = "Time Left : " + time + "        " + "Score : " + score ;
+
+        JLabel menu = new JLabel(label);
+        return menu;
+    }
+
+
+    /**
+     * Initialize the game board, grid s
+     * @return the GridLayout composed of JLabel
+     */
+    private JPanel component_gameBoard() {
+        JPanel grille = new JPanel(new GridLayout(sizeY, sizeX));
+
+        tabJLabel = new JLabel[sizeX][sizeY];
+        for (int y = 0; y < sizeY; y++) {
+            for (int x = 0; x < sizeX; x++) {
+                JLabel jlab = new JLabel();
+
+                tabJLabel[x][y] = jlab; // on conserve les cases graphiques dans tabJLabel pour avoir un accès pratique à celles-ci (voir mettreAJourAffichage() )
+                grille.add(jlab);
+            }
+        }
+
+        return grille;
+    }
 }
