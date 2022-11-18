@@ -5,7 +5,7 @@ Projet LIFPOO
 
 #### Généralités :
 - Gestion des collisions (Prof. / Smicks, Smicks / Murs, Smicks / Smicks)
-- Système de points
+- Système de points (ALLAN)
 - Règles du jeu (mort, fin du niveau...)
 
 #### les Smicks :
@@ -13,12 +13,12 @@ Projet LIFPOO
 - Améliorer la vision des Smicks (ex: vision a 5 blocs et se dirige vers le Prof)
 
 #### Les bombes :
-- Créer les bombes
+- Créer les bombes (ENZO)
 - Capacité de ramasser les objets (Bombes, Bonus)
 
 #### Environnement :
-- Capacité de monter/descendre aux cordes lorsque le Prof. est sur une corde
-- Capacité de faire se déplacer les Piliers + collisions Piliers (une entité écrasée par un pilier est tuée) Bonus : le Prof. doit être déplacé en même temps s’il se situe au sommet d’un Pilier
+- Capacité de monter/descendre aux cordes lorsque le Prof. est sur une corde (ENZO)
+- Capacité de faire se déplacer les Piliers + collisions Piliers (une entité écrasée par un pilier est tuée) Bonus : le Prof. doit être déplacé en même temps s’il se situe au sommet d’un Pilier (ENZO)
 
 
 

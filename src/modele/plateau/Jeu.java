@@ -85,7 +85,18 @@ public class Jeu {
             {
                 char nextTile = level.next().charAt(0); //reads the next char
                 switch (nextTile){
-                    
+                    case 'M': {
+                        addEntite(new Mur(this), i, j);
+                        break;
+                    }
+                    case 'P': {
+                        addEntite(new Platform(this), i, j);
+                        break;
+                    }
+                    case 'C': {
+                        addEntite(new Corde(this), i, j);
+                        break;
+                    }
                 }
             }
         }
