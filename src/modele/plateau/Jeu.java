@@ -108,7 +108,22 @@ public class Jeu {
             {
                 char nextTile = level.next().charAt(0); //reads the next char
                 switch (nextTile){
+<<<<<<< HEAD
+                    case 'M': {
+                        addEntite(new Mur(this), i, j);
+                        break;
+                    }
+                    case 'P': {
+                        addEntite(new Platform(this), i, j);
+                        break;
+                    }
+                    case 'C': {
+                        addEntite(new Corde(this), i, j);
+                        break;
+                    }
+=======
 
+>>>>>>> 208d313bb0cbaf19dd3067e95361691a0ba7f3bd
                 }
             }
         }
