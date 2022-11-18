@@ -34,8 +34,17 @@ public class Jeu {
 
     private Ordonnanceur ordonnanceur = new Ordonnanceur(this);
 
+    /** */
+    public int TimeLeft;
+
+    public int Score;
+
     public Jeu() {
+
         initialisationDesEntites();
+        TimeLeft = 1000;
+        Score = 0;
+
     }
 
     public void resetCmptDepl() {
@@ -59,6 +68,7 @@ public class Jeu {
         hector = new Heros(this);
         addEntite(hector, 2, 1);
 
+
         Gravite g = new Gravite();
         g.addEntiteDynamique(hector);
         ordonnanceur.add(g);
@@ -77,6 +87,9 @@ public class Jeu {
         addEntite(new Corde(this), 4, 6);
         addEntite(new Corde(this), 4, 7);
 
+
+        /** J'ai documenté ton code parce qu'il crée une erreur à la ligne 97 , je pense que tu ne l'avais pas fini.
+
         Scanner level = new Scanner("../../Levels/00.txt"); //whatever file is being read
 
         for (int i=0; i<30; i++)
@@ -85,6 +98,7 @@ public class Jeu {
             {
                 char nextTile = level.next().charAt(0); //reads the next char
                 switch (nextTile){
+<<<<<<< HEAD
                     case 'M': {
                         addEntite(new Mur(this), i, j);
                         break;
@@ -97,11 +111,16 @@ public class Jeu {
                         addEntite(new Corde(this), i, j);
                         break;
                     }
+=======
+
+>>>>>>> 208d313bb0cbaf19dd3067e95361691a0ba7f3bd
                 }
             }
         }
 
         level.close(); // close the file
+
+         **/
     }
 
     private void addEntite(Entite e, int x, int y) {
@@ -109,7 +128,7 @@ public class Jeu {
         map.put(e, new Point(x, y));
     }
     
-    /** Permet par exemple a une entité  de percevoir sont environnement proche et de définir sa stratégie de déplacement
+    /** Permet par exemple a une entité de percevoir sont environnement proche et de définir sa stratégie de déplacement
      *
      */
     public Entite regarderDansLaDirection(Entite e, Direction d) {
@@ -196,4 +215,16 @@ public class Jeu {
     public Ordonnanceur getOrdonnanceur() {
         return ordonnanceur;
     }
+
+
+    public int GetScore() { return Score; }
+
+    public int GetTimeLeft() { return TimeLeft; }
+
+    public void d_TimeLeft() {
+        TimeLeft = TimeLeft - 1;
+    }
+
+
+
 }
