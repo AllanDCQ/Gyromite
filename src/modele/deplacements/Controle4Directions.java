@@ -44,7 +44,7 @@ public class Controle4Directions extends RealisateurDeDeplacement {
                         break;
                     case bas:
                         /* Peut descendre si la case du bas a true peutPermettreDeMonterDescendre */
-                        if (eBas.peutPermettreDeMonterDescendre()) {
+                        if (eBas != null && eBas.peutPermettreDeMonterDescendre()) {
                             e.avancerDirectionChoisie(Direction.bas);
                             ret = true;
                         }

@@ -36,17 +36,22 @@ public class Jeu {
     private Ordonnanceur ordonnanceur = new Ordonnanceur(this);
 
 
-    /** Time Variables */
-    private int TimeLeft; // Variable of secondes left
-    private int Slepp_ms; // time slepp in ms between each loop
-    private int Time_wait = 0; //
+    /* Time Variables */
+        /* Variable of secondes left */
+        private int TimeLeft;
+        /* Variable of time sleep in ms between each loop */
+        private int Slepp_ms;
+        /* Variable used to calculate the loop */
+        private int Time_wait = 0; //
+
+    /* Hero's score */
     private int Score;
 
+    /* Stock the old entity on which the hero is */
     public Entite ancienne_entite = null;
 
 
     public Jeu() {
-
         initialisationDesEntites();
         TimeLeft = 1000;
         Score = 0;
@@ -138,89 +143,109 @@ public class Jeu {
          **/
     }
 
+    /**
+     * Create a new entity with given coordinates
+     * @param e Class of the new entity
+     * @param x pos x of the new entity
+     * @param y pos y of the new entity
+     */
     private void addEntite(Entite e, int x, int y) {
         grilleEntites[x][y] = e;
         map.put(e, new Point(x, y));
     }
-    
-    /** Permet par exemple a une entité de percevoir sont environnement proche et de définir sa stratégie de déplacement
-     *
+
+
+    /**
+     * Permet par exemple a une entité de percevoir sont environnement proche et de définir sa stratégie de déplacement
+    * @param e Selected entity
+    * @param d Direction in which to look
      */
     public Entite regarderDansLaDirection(Entite e, Direction d) {
         Point positionEntite = map.get(e);
         return objetALaPosition(calculerPointCible(positionEntite, d));
     }
-    
-    /** Si le déplacement de l'entité est autorisé (pas de mur ou autre entité), il est réalisé
-     * Sinon, rien n'est fait.
+
+
+    /**
+     * Make the move if the entity is allowed
+     * @param e Selected entity
+     * @param d Direction in which to move
      */
     public boolean deplacerEntite(Entite e, Direction d) {
-            boolean retour = false;
-
-            Point pCourant = map.get(e);
-
-            Point pCible = calculerPointCible(pCourant, d);
-
-            Entite next_entite = objetALaPosition(pCible);
+        boolean retour = false;
+        Point pCourant = map.get(e);
+        Point pCible = calculerPointCible(pCourant, d);
+        Entite next_entite = objetALaPosition(pCible);
 
 
-            if (contenuDansGrille(pCible)) {
-                switch (d) {
-                    case bas:
-                    case haut:
-                        if (cmptDeplV.get(e) == null) {
-                            if (next_entite == null) {
+        if (contenuDansGrille(pCible)) {
+            switch (d) {
+                case bas:
+                case haut:
+                    /* S'il n'a pas déjà avancé ce tour */
+                    if (cmptDeplV.get(e) == null) {
+                        /* Si la prochaine case est vide */
+                        if (next_entite == null) {
+                            retour = true;
+                        }
+                        /* Si la prochaine case n'est pas vide */
+                        else {
+                            /* Si la prochaine case est une entité qui peut être écrasée */
+                            if (next_entite.peutEtreEcrase()) {
                                 retour = true;
-                            } else {
-                                if (next_entite.peutEtreEcrase()) {
-                                    retour = true;
-                                    if (next_entite.get_class_string().equals("Bombe")) {
-                                        Score += 100;
-                                    }
+                                /* Si la prochaine case est une bombe */
+                                if (next_entite.get_class_string().equals("Bombe")) {
+                                    increase_Score();
                                 }
                             }
-                            cmptDeplV.put(e, 1);
-                        } else {
-                            if (next_entite != null) {
-                                if (next_entite.peutPermettreDeMonterDescendre()) {
-                                    System.out.println("peutPermettreDeMonterDescendre = true");
-                                    retour = true;
-                                    cmptDeplV.put(e, 1);
+
+                            /* Si la prochaine case est une entité qui peut permettre de descendre */
+                            if (next_entite.peutPermettreDeMonterDescendre()) {
+                                retour = true;
+                            }
+                        }
+
+                        cmptDeplV.put(e, 1);
+                    }
+                    break;
+                case gauche:
+                case droite:
+                    if (cmptDeplH.get(e) == null) {
+                        /* Si la prochaine case est vide */
+                        if (next_entite == null) {
+                            retour = true;
+                        }
+                        /* Si la prochaine case est une entité */
+                        else {
+                            /* Si la prochaine case est une entité qui peut être écrasée */
+                            if (next_entite.peutEtreEcrase()) {
+                                retour = true;
+                                /* Si la prochaine case est une bombe */
+                                if (next_entite.get_class_string().equals("Bombe")) {
+                                    increase_Score();
                                 }
                             }
                         }
-                        break;
-                    case gauche:
-                    case droite:
-                        if (cmptDeplH.get(e) == null) {
-                            if (next_entite == null) {
-                                retour = true;
-                            } else {
-                                if (next_entite.peutEtreEcrase()) {
-                                    retour = true;
-                                    if (next_entite.get_class_string().equals("Bombe")) {
-                                        Score += 100;
-                                    }
-                                }
-                            }
-                            cmptDeplH.put(e, 1);
-                        }
-                        break;
+                        cmptDeplH.put(e, 1);
+                    }
+                    break;
 
-                }
             }
+        }
 
-
-
-
-            if (retour) {
-                deplacerEntite(pCourant, pCible, e);
-            }
-
-            return retour;
+        if (retour) {
+            deplacerEntite(pCourant, pCible, e);
+        }
+        return retour;
     }
 
-    
+
+    /**
+     * Function who return the next in function of the Direction
+     * @param pCourant Current point
+     * @param d Direction in which to calculate
+     * @return the next point in function of the Direction
+     */
     private Point calculerPointCible(Point pCourant, Direction d) {
         Point pCible = null;
         
@@ -234,7 +259,15 @@ public class Jeu {
         
         return pCible;
     }
-    
+
+
+    /**
+     * Move an entity from a current point to a target point. Replaces in the old point the entity(ancienne_entite)
+     * that was before except for the bomb
+     * @param pCourant Current point
+     * @param pCible Point where to move
+     * @param e Entity to be moved
+     */
     private void deplacerEntite(Point pCourant, Point pCible, Entite e) {
 
         if (ancienne_entite == null) {
@@ -253,13 +286,18 @@ public class Jeu {
         map.put(e, pCible);
 
     }
-    
-    /** Indique si p est contenu dans la grille
-     */
+
+
     private boolean contenuDansGrille(Point p) {
         return p.x >= 0 && p.x < SIZE_X && p.y >= 0 && p.y < SIZE_Y;
     }
-    
+
+
+    /**
+     * Function that returns the entity at the given point
+     * @param p the point to be analyzed
+     * @return The entity at the given point
+     */
     private Entite objetALaPosition(Point p) {
         Entite retour = null;
         
@@ -270,6 +308,7 @@ public class Jeu {
         return retour;
     }
 
+
     public Ordonnanceur getOrdonnanceur() {
         return ordonnanceur;
     }
@@ -279,13 +318,27 @@ public class Jeu {
      * Get the score
      * @return the player's score
      */
-    public int GetScore() { return Score; }
+    public int GetScore() {
+        return Score;
+    }
+
+
+    /**
+     * Increase 100 the Score variable
+     */
+    public void increase_Score() {
+        Score += 100;
+    }
+
 
     /**
      * Get the time
      * @return the player's time left in secondes
      */
-    public int GetTimeLeft() { return TimeLeft; }
+    public int GetTimeLeft() {
+        return TimeLeft;
+    }
+
 
     /**
      * Increase the variable of the time (TimeLeft) each seconde
