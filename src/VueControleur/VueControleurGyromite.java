@@ -108,7 +108,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
         /* Add son layouts to the father layout */
         centralPanel.add(barMenu, BorderLayout.NORTH);
-        centralPanel.add(grilleJLabels, BorderLayout.SOUTH);
+        centralPanel.add(grilleJLabels, BorderLayout.CENTER);
 
     }
 

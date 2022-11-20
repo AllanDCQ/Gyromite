@@ -107,40 +107,6 @@ public class Jeu {
         addEntite(new Platform(this), 5, 10);
         addEntite(new Bombe(this),10,23);
 
-
-        /** J'ai documenté ton code parce qu'il crée une erreur à la ligne 97 , je pense que tu ne l'avais pas fini.
-
-        Scanner level = new Scanner("../../Levels/00.txt"); //whatever file is being read
-
-        for (int i=0; i<30; i++)
-        {
-            for (int j=0; j<30; j++)
-            {
-                char nextTile = level.next().charAt(0); //reads the next char
-                switch (nextTile){
-<<<<<<< HEAD
-                    case 'M': {
-                        addEntite(new Mur(this), i, j);
-                        break;
-                    }
-                    case 'P': {
-                        addEntite(new Platform(this), i, j);
-                        break;
-                    }
-                    case 'C': {
-                        addEntite(new Corde(this), i, j);
-                        break;
-                    }
-=======
-
->>>>>>> 208d313bb0cbaf19dd3067e95361691a0ba7f3bd
-                }
-            }
-        }
-
-        level.close(); // close the file
-
-         **/
     }
 
     /**
