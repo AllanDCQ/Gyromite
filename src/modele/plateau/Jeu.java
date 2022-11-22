@@ -193,7 +193,7 @@ public class Jeu {
                         /* Si la prochaine case est une entité */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée */
-                            if (next_entite.peutEtreEcrase()) {
+                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {
                                 retour = true;
                                 /* Si la prochaine case est une bombe */
                                 if (next_entite.get_class_string().equals("Bombe")) {

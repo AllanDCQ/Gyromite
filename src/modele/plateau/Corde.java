@@ -9,7 +9,7 @@ public class Corde extends EntiteStatique {
     public boolean peutPermettreDeMonterDescendre() { return true; }
 
     @Override
-    public boolean peutEtreEcrase() { return true; }
+    public boolean peutEtreEcrase() { return false; }
 
     @Override
     public String get_class_string() {
