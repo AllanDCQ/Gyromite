@@ -8,6 +8,9 @@ public class Bombe extends EntiteStatique {
     public boolean peutEtreEcrase() { return true; }
 
     @Override
+    public boolean peutServirDeSupport() { return false; }
+
+    @Override
     public String get_class_string() {
         return "Bombe";
     }

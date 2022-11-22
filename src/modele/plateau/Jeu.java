@@ -13,8 +13,13 @@ import modele.deplacements.Ordonnanceur;
 import javax.swing.*;
 import java.awt.Point;
 import java.util.HashMap;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /** Actuellement, cette classe gère les postions
  * (ajouter conditions de victoire, chargement du plateau, etc.)
@@ -106,6 +111,10 @@ public class Jeu {
         addEntite(new Platform(this), 4, 10);
         addEntite(new Platform(this), 5, 10);
         addEntite(new Bombe(this),10,23);
+        addEntite(new Bombe(this),1,23);
+
+        // Fonction pour load un niveau a partir d'un fichier text
+        //loadLevel("Levels/00.txt");
 
     }
 
@@ -316,6 +325,68 @@ public class Jeu {
             TimeLeft = TimeLeft - 1;
             Time_wait = 0;
         }
+    }
+
+    public void loadLevel(String fileName){
+
+        char[][] array = new char[1][];
+
+        //reads all lines of the level file  
+        File file = new File(fileName);
+
+        try (FileReader fr = new FileReader(file)) {
+            BufferedReader br = new BufferedReader(fr);
+            
+            // Get the size of the board
+            String[] size = br.readLine().split(" ");
+            array = new char[Integer.parseInt(size[0])][Integer.parseInt(size[1])];
+            
+            // Get the map into char 2D Array 
+            String line;
+            int i = 0;
+            while((line = br.readLine()) != null){
+                //process the line
+                //System.out.println(line);
+                array[i] = line.toCharArray();
+                i++;
+            }
+        } catch (NumberFormatException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        // Create each entite for the corresponding char in the array we got from the txt file
+        for(int row = 0; row < array.length; row++){
+            for (int col = 0; col < array[row].length; col++) {
+
+                switch(array[row][col]) {
+                    case 'H':
+                        hector = new Heros(this);
+                        addEntite(hector, col, row);
+                
+                        Gravite g = new Gravite();
+                        g.addEntiteDynamique(hector);
+                        ordonnanceur.add(g);
+                
+                        Controle4Directions.getInstance().addEntiteDynamique(hector);
+                        ordonnanceur.add(Controle4Directions.getInstance());
+                    case 'P':
+                        addEntite(new Platform(this), col, row);
+                        break;
+                    case 'M':
+                        addEntite(new Mur(this), col, row);
+                        break;
+                    case 'B':
+                        addEntite(new Bombe(this), col, row);
+                        break;
+                    case 'C':
+                        addEntite(new Corde(this), col, row);
+                        break;
+                }
+            }
+        }
+
     }
 
 
