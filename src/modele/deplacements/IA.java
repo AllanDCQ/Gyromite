@@ -18,8 +18,8 @@ public class IA extends RealisateurDeDeplacement {
     protected boolean realiserDeplacement() {
         boolean ret = false;
         for (EntiteDynamique e : lstEntitesDynamiques) {
-
             if (sleep_avance) {
+
                 for (int dist = 0; dist < 5; dist++) {
                     Entite egauche = e.regarderDansLaDirectionDistance(Direction.gauche,dist);
                     if (egauche != null) {
@@ -50,6 +50,8 @@ public class IA extends RealisateurDeDeplacement {
                             }
                             break;
                     }
+
+
                 sleep_avance = false;
             } else {
                 sleep_avance = true;

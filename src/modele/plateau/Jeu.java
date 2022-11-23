@@ -91,13 +91,13 @@ public class Jeu {
 
     private void initialisationDesEntites() {
 
-        smicks[0] = new Bot(this);
-        addEntite(smicks[0], 15,23);
-        IA.getInstance().addEntiteDynamique(smicks[0]);
-        ordonnanceur.add(IA.getInstance());
-
         // Fonction pour load un niveau à partir d'un fichier text
         loadLevel("Levels/00.txt");
+
+        smicks[0] = new Bot(this);
+        addEntite(smicks[0], 15,21);
+        IA.getInstance().addEntiteDynamique(smicks[0]);
+        ordonnanceur.add(IA.getInstance());
 
     }
 
