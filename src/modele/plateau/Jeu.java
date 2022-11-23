@@ -36,7 +36,7 @@ public class Jeu {
     private HashMap<Entite, Integer> cmptDeplV = new HashMap<Entite, Integer>();
 
     private Heros hector;
-    private Bot smicks[] = new Bot[10];
+    private ArrayList<Bot> smicks = new ArrayList<Bot>();
 
     private HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Entite[][] grilleEntites = new Entite[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
@@ -90,11 +90,6 @@ public class Jeu {
 
 
     private void initialisationDesEntites() {
-
-        smicks[0] = new Bot(this);
-        addEntite(smicks[0], 15,23);
-        IA.getInstance().addEntiteDynamique(smicks[0]);
-        ordonnanceur.add(IA.getInstance());
 
         // Fonction pour load un niveau à partir d'un fichier text
         loadLevel("Levels/00.txt");
@@ -398,6 +393,12 @@ public class Jeu {
                         break;
                     case 'R':
                         addEntite(new Corde(this), col, row);
+                        break;
+                    case 'S':
+                        smicks.add(new Bot(this));
+                        addEntite(smicks.get(smicks.size() - 1), 15,23);
+                        IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() - 1));
+                        ordonnanceur.add(IA.getInstance());
                         break;
                     case 'C':
                         Colonne tmp_colonne = new Colonne(this);

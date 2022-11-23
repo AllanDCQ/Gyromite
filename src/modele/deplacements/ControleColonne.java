@@ -70,7 +70,5 @@ public class ControleColonne extends RealisateurDeDeplacement {
         lstEntitesDynamiques.add(ed);
         lstEntitesDynamiquesInverse.addAll(lstEntitesDynamiques);
         Collections.reverse(lstEntitesDynamiquesInverse);
-        System.out.println(lstEntitesDynamiques);
-        System.out.println(lstEntitesDynamiquesInverse);
     };
 }
