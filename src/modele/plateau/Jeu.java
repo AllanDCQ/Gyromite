@@ -6,6 +6,7 @@
 package modele.plateau;
 
 import modele.deplacements.Controle4Directions;
+import modele.deplacements.ControleColonne;
 import modele.deplacements.Direction;
 import modele.deplacements.Gravite;
 import modele.deplacements.Ordonnanceur;
@@ -82,6 +83,8 @@ public class Jeu {
     }
 
     private void initialisationDesEntites() {
+
+        /*
         hector = new Heros(this);
         addEntite(hector, 2, 2);
 
@@ -112,9 +115,11 @@ public class Jeu {
         addEntite(new Platform(this), 5, 10);
         addEntite(new Bombe(this),10,23);
         addEntite(new Bombe(this),1,23);
+        */
 
         // Fonction pour load un niveau a partir d'un fichier text
-        //loadLevel("Levels/00.txt");
+        loadLevel("Levels/00.txt");
+        //System.out.println(Arrays.toString(grilleEntites));
 
     }
 
@@ -334,6 +339,7 @@ public class Jeu {
         //reads all lines of the level file  
         File file = new File(fileName);
 
+        // open the file 
         try (FileReader fr = new FileReader(file)) {
             BufferedReader br = new BufferedReader(fr);
             
@@ -346,7 +352,6 @@ public class Jeu {
             int i = 0;
             while((line = br.readLine()) != null){
                 //process the line
-                //System.out.println(line);
                 array[i] = line.toCharArray();
                 i++;
             }
@@ -380,9 +385,15 @@ public class Jeu {
                     case 'B':
                         addEntite(new Bombe(this), col, row);
                         break;
-                    case 'C':
+                    case 'R':
                         addEntite(new Corde(this), col, row);
                         break;
+                    case 'C':
+                        Colonne tmp_colonne = new Colonne(this);
+                        addEntite(tmp_colonne, col, row);
+                        ControleColonne.getInstance().addEntiteDynamique(tmp_colonne);
+                        ordonnanceur.add(ControleColonne.getInstance());
+                        
                 }
             }
         }
