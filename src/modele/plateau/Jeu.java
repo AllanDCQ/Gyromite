@@ -6,6 +6,7 @@
 package modele.plateau;
 
 import modele.deplacements.Controle4Directions;
+import modele.deplacements.ControleColonne;
 import modele.deplacements.Direction;
 import modele.deplacements.Gravite;
 import modele.deplacements.Ordonnanceur;
@@ -90,45 +91,13 @@ public class Jeu {
 
     private void initialisationDesEntites() {
 
-        hector = new Heros(this);
-        addEntite(hector, 2, 2);
-        Controle4Directions.getInstance().addEntiteDynamique(hector);
-        ordonnanceur.add(Controle4Directions.getInstance());
-
-
-        Gravite g = new Gravite();
-        g.addEntiteDynamique(hector);
-        ordonnanceur.add(g);
-
-
-
-        // murs extérieurs horizontaux
-        for (int x = 0; x < SIZE_X; x++) {
-            addEntite(new Mur(this), x, SIZE_Y-1);
-        }
-
-        addEntite(new Platform(this), 2, 4);
-        addEntite(new Platform(this), 2, 6);
-        addEntite(new Platform(this), 3, 6);
-        addEntite(new Corde(this), 4, 5);
-        addEntite(new Corde(this), 4, 6);
-        addEntite(new Corde(this), 4, 7);
-        addEntite(new Corde(this), 4, 8);
-        addEntite(new Corde(this), 4, 9);
-        addEntite(new Corde(this), 4, 10);
-
-        addEntite(new Platform(this), 4, 10);
-        addEntite(new Platform(this), 5, 10);
-        addEntite(new Bombe(this),10,23);
-        addEntite(new Bombe(this),1,23);
-
         smicks[0] = new Bot(this);
         addEntite(smicks[0], 15,23);
         IA.getInstance().addEntiteDynamique(smicks[0]);
         ordonnanceur.add(IA.getInstance());
 
-        // Fonction pour load un niveau a partir d'un fichier text
-        //loadLevel("Levels/00.txt");
+        // Fonction pour load un niveau à partir d'un fichier text
+        loadLevel("Levels/00.txt");
 
     }
 
@@ -146,7 +115,7 @@ public class Jeu {
 
 
     /**
-     * Permet par exemple a une entité de percevoir sont environnement proche et de définir sa stratégie de déplacement
+     * Permet par exemple a une entité de percevoir son environnement proche et de définir sa stratégie de déplacement
     * @param e Selected entity
     * @param d Direction in which to look
      */
@@ -381,6 +350,7 @@ public class Jeu {
         //reads all lines of the level file  
         File file = new File(fileName);
 
+        // open the file 
         try (FileReader fr = new FileReader(file)) {
             BufferedReader br = new BufferedReader(fr);
             
@@ -393,7 +363,6 @@ public class Jeu {
             int i = 0;
             while((line = br.readLine()) != null){
                 //process the line
-                //System.out.println(line);
                 array[i] = line.toCharArray();
                 i++;
             }
@@ -427,9 +396,15 @@ public class Jeu {
                     case 'B':
                         addEntite(new Bombe(this), col, row);
                         break;
-                    case 'C':
+                    case 'R':
                         addEntite(new Corde(this), col, row);
                         break;
+                    case 'C':
+                        Colonne tmp_colonne = new Colonne(this);
+                        addEntite(tmp_colonne, col, row);
+                        ControleColonne.getInstance().addEntiteDynamique(tmp_colonne);
+                        ordonnanceur.add(ControleColonne.getInstance());
+                        
                 }
             }
         }

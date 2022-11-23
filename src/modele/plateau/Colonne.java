@@ -9,11 +9,11 @@ public class Colonne extends EntiteDynamique {
 
     @Override
     public boolean deplacementAction(Entite next_entite) {
-        if(this.getClass().getName().equals("modele.plateau.Colonne")) {
-            if (next_entite.getClass().getName().equals("modele.plateau.Colonne")) return true;
-            else return false;
-        } else return false;
-
+        //if(this.getClass().getName().equals("modele.plateau.Colonne")) {
+        //    if (next_entite.getClass().getName().equals("modele.plateau.Colonne")) return true;
+        //    else return false;
+        //} else return false;
+        return false;
     }
 
 }

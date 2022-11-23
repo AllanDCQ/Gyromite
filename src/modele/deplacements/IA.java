@@ -4,7 +4,7 @@ import modele.plateau.Entite;
 import modele.plateau.EntiteDynamique;
 
 public class IA extends RealisateurDeDeplacement {
-    private Direction directionCourante;
+    private Direction directionCourante = Direction.droite;
     private static IA iad;
     private boolean sleep_avance;
 
@@ -36,6 +36,7 @@ public class IA extends RealisateurDeDeplacement {
                             System.out.println(directionCourante);
                         }
                     }
+
                 }
 
 
