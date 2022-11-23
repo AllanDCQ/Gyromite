@@ -8,9 +8,12 @@ public class Colonne extends EntiteDynamique {
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
     @Override
-    public String get_class_string() {
-        return "Colonne";
+    public boolean deplacementAction(Entite next_entite) {
+        if(this.getClass().getName().equals("modele.plateau.Colonne")) {
+            if (next_entite.getClass().getName().equals("modele.plateau.Colonne")) return true;
+            else return false;
+        } else return false;
+
     }
 
-    ;
 }

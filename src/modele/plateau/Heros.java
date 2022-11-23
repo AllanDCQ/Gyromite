@@ -18,9 +18,13 @@ public class Heros extends EntiteDynamique {
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
     @Override
-    public String get_class_string() {
-        return "Heros";
+    public boolean deplacementAction(Entite next_entite) {
+        /* Si la prochaine case est une bombe */
+        if (next_entite.getClass().getName().equals("modele.plateau.Bombe")) {
+            jeu.increase_Score();
+        }
+        return true;
     }
 
-    ;
+
 }

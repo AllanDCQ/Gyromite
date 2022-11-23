@@ -12,4 +12,9 @@ public abstract class EntiteDynamique extends Entite {
         return jeu.deplacerEntite(this, d);
     }
     public Entite regarderDansLaDirection(Direction d) {return jeu.regarderDansLaDirection(this, d);}
+
+    public Entite regarderDansLaDirectionDistance(Direction d, int distance) {
+        return jeu.regarderDansLaDirectionDistance(this, d, distance);
+    }
+
 }

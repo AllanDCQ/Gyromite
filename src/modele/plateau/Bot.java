@@ -17,14 +17,13 @@ public class Bot extends EntiteDynamique {
         super(_jeu);
     }
 
-    public boolean peutEtreEcrase() { return true; }
+    public boolean peutEtreEcrase() { return false; }
     public boolean peutServirDeSupport() { return true; }
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
     @Override
-    public String get_class_string() {
-        return "Bot";
+    public boolean deplacementAction(Entite next_entite) {
+        return false;
     }
 
-    ;
 }

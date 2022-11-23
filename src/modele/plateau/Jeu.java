@@ -9,6 +9,7 @@ import modele.deplacements.Controle4Directions;
 import modele.deplacements.Direction;
 import modele.deplacements.Gravite;
 import modele.deplacements.Ordonnanceur;
+import modele.deplacements.IA;
 
 import javax.swing.*;
 import java.awt.Point;
@@ -34,6 +35,7 @@ public class Jeu {
     private HashMap<Entite, Integer> cmptDeplV = new HashMap<Entite, Integer>();
 
     private Heros hector;
+    private Bot smicks[] = new Bot[10];
 
     private HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Entite[][] grilleEntites = new Entite[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
@@ -63,35 +65,42 @@ public class Jeu {
 
     }
 
+
     public void resetCmptDepl() {
         cmptDeplH.clear();
         cmptDeplV.clear();
     }
 
+
     public void start(long _pause) {
         Slepp_ms = (int)_pause;
         ordonnanceur.start(_pause);
     }
-    
+
+
     public Entite[][] getGrille() {
         return grilleEntites;
     }
-    
+
+
     public Heros getHector() {
         return hector;
     }
 
+
     private void initialisationDesEntites() {
+
         hector = new Heros(this);
         addEntite(hector, 2, 2);
+        Controle4Directions.getInstance().addEntiteDynamique(hector);
+        ordonnanceur.add(Controle4Directions.getInstance());
 
 
         Gravite g = new Gravite();
         g.addEntiteDynamique(hector);
         ordonnanceur.add(g);
 
-        Controle4Directions.getInstance().addEntiteDynamique(hector);
-        ordonnanceur.add(Controle4Directions.getInstance());
+
 
         // murs extérieurs horizontaux
         for (int x = 0; x < SIZE_X; x++) {
@@ -113,10 +122,16 @@ public class Jeu {
         addEntite(new Bombe(this),10,23);
         addEntite(new Bombe(this),1,23);
 
+        smicks[0] = new Bot(this);
+        addEntite(smicks[0], 15,23);
+        IA.getInstance().addEntiteDynamique(smicks[0]);
+        ordonnanceur.add(IA.getInstance());
+
         // Fonction pour load un niveau a partir d'un fichier text
         //loadLevel("Levels/00.txt");
 
     }
+
 
     /**
      * Create a new entity with given coordinates
@@ -138,6 +153,18 @@ public class Jeu {
     public Entite regarderDansLaDirection(Entite e, Direction d) {
         Point positionEntite = map.get(e);
         return objetALaPosition(calculerPointCible(positionEntite, d));
+    }
+
+
+    /**
+     * Permet par exemple a une entité de percevoir sont environnement proche et de définir sa stratégie de déplacement
+     * @param e Selected entity
+     * @param d Direction in which to look
+     * @param distance Distance from the current point
+     */
+    public Entite regarderDansLaDirectionDistance(Entite e, Direction d, int distance) {
+        Point positionEntite = map.get(e);
+        return objetALaPosition(calculerPointCibleDistance(positionEntite, d, distance));
     }
 
 
@@ -165,19 +192,16 @@ public class Jeu {
                         }
                         /* Si la prochaine case n'est pas vide */
                         else {
-                            /* Si la prochaine case est une entité qui peut être écrasée */
-                            if (next_entite.peutEtreEcrase()) {
+                            /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
+                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {
                                 retour = true;
-                                /* Si la prochaine case est une bombe */
-                                if (next_entite.get_class_string().equals("Bombe")) {
-                                    increase_Score();
-                                }
                             }
 
-                            /* Si la prochaine case est une entité qui peut permettre de descendre */
-                            if (next_entite.peutPermettreDeMonterDescendre()) {
+                            if (e.deplacementAction(next_entite)){
                                 retour = true;
                             }
+
+
                         }
 
                         cmptDeplV.put(e, 1);
@@ -192,13 +216,13 @@ public class Jeu {
                         }
                         /* Si la prochaine case est une entité */
                         else {
-                            /* Si la prochaine case est une entité qui peut être écrasée */
+                            /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {
                                 retour = true;
-                                /* Si la prochaine case est une bombe */
-                                if (next_entite.get_class_string().equals("Bombe")) {
-                                    increase_Score();
-                                }
+                            }
+
+                            if (e.deplacementAction(next_entite)){
+                                retour = true;
                             }
                         }
                         cmptDeplH.put(e, 1);
@@ -216,10 +240,10 @@ public class Jeu {
 
 
     /**
-     * Function who return the next in function of the Direction
+     * Function who return the point in function of the Direction
      * @param pCourant Current point
      * @param d Direction in which to calculate
-     * @return the next point in function of the Direction
+     * @return the point in function of the Direction
      */
     private Point calculerPointCible(Point pCourant, Direction d) {
         Point pCible = null;
@@ -237,6 +261,28 @@ public class Jeu {
 
 
     /**
+     * Function who return the point in function of the Direction
+     * @param pCourant Current point
+     * @param d Direction in which to calculate
+     * @param distance Distance from the current point
+     * @return the point in function of the Direction
+     */
+    private Point calculerPointCibleDistance(Point pCourant, Direction d, int distance) {
+        Point pCible = null;
+
+        switch(d) {
+            case haut: pCible = new Point(pCourant.x, pCourant.y - 1 - distance); break;
+            case bas : pCible = new Point(pCourant.x, pCourant.y + 1  + distance); break;
+            case gauche : pCible = new Point(pCourant.x - 1 - distance, pCourant.y); break;
+            case droite : pCible = new Point(pCourant.x + 1 + distance, pCourant.y); break;
+
+        }
+
+        return pCible;
+    }
+
+
+    /**
      * Move an entity from a current point to a target point. Replaces in the old point the entity(ancienne_entite)
      * that was before except for the bomb
      * @param pCourant Current point
@@ -248,7 +294,7 @@ public class Jeu {
         if (ancienne_entite == null) {
             grilleEntites[pCourant.x][pCourant.y] = null;
         } else {
-            if (!ancienne_entite.get_class_string().equals("Bombe")) {
+            if (!ancienne_entite.getClass().getName().equals("modele.plateau.Bombe")) {
                 grilleEntites[pCourant.x][pCourant.y] = ancienne_entite;
             } else {
                 grilleEntites[pCourant.x][pCourant.y] = null;
@@ -327,6 +373,7 @@ public class Jeu {
         }
     }
 
+
     public void loadLevel(String fileName){
 
         char[][] array = new char[1][];
@@ -388,7 +435,5 @@ public class Jeu {
         }
 
     }
-
-
 
 }

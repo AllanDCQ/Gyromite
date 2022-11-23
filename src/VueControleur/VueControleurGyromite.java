@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -32,7 +33,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     // icones affichées dans la grille
     private ImageIcon icoHero;
-    private ImageIcon icoBot;
     private ImageIcon icoVide;
     private ImageIcon icoColonne;
     private ImageIcon icoBedrock;
@@ -41,6 +41,9 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     private ImageIcon[] icoBombe = new ImageIcon[4];
     private int current_sprite_bomb;
+
+    private ImageIcon[] icoBot = new ImageIcon[4];
+    private int current_sprite_bot;
 
     private JLabel[][] tabJLabel; // cases graphiques (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
 
@@ -90,6 +93,12 @@ public class VueControleurGyromite extends JFrame implements Observer {
         icoBombe[1] = chargerIcone("Images/bomb_ca.png", 64, 0, 64, 64);
         icoBombe[2] = chargerIcone("Images/bomb_ca.png", 128, 0, 64, 64);
         icoBombe[3] = chargerIcone( "Images/bomb_ca.png", 192, 0, 64, 64);
+
+        /* SpriteSheet des smicks */
+        icoBot[0] = chargerIcone("Images/smick_ca.png", 0, 0, 32, 32);
+        icoBot[1] = chargerIcone("Images/smick_ca.png", 32, 0, 32, 32);
+        icoBot[2] = chargerIcone("Images/smick_ca.png", 0, 0, 32, 32);
+        icoBot[3] = chargerIcone( "Images/smick_ca.png", 32, 0, 32, 32);
     }
 
     private void placerLesComposantsGraphiques() {
@@ -129,7 +138,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     //tabJLabel[x][y].getGraphics().drawImage(bi, 0, 0, null);
 
                 } else if (jeu.getGrille()[x][y] instanceof Bot) {
-                    tabJLabel[x][y].setIcon(icoBot);
+                    tabJLabel[x][y].setIcon(next_sprite(current_sprite_bot, Bot.class.getName()));
                 } else if (jeu.getGrille()[x][y] instanceof Mur) {
                     tabJLabel[x][y].setIcon(icoBedrock);
                 } else if (jeu.getGrille()[x][y] instanceof Colonne) {
@@ -137,7 +146,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 } else if (jeu.getGrille()[x][y] instanceof Platform) {
                     tabJLabel[x][y].setIcon(icoPlatform);
                 } else if (jeu.getGrille()[x][y] instanceof Bombe) {
-                    tabJLabel[x][y].setIcon(Sprite_Bombe());
+                    tabJLabel[x][y].setIcon(next_sprite(current_sprite_bomb, Bombe.class.getName()));
                 } else if (jeu.getGrille()[x][y] instanceof Corde) {
                     tabJLabel[x][y].setIcon(icoCorde);
                 } else {
@@ -270,17 +279,30 @@ public class VueControleurGyromite extends JFrame implements Observer {
     }
 
 
-    private ImageIcon Sprite_Bombe() {
+    private ImageIcon next_sprite(int current_sprite, String entite ) {
         ImageIcon next;
         int current_time = jeu.GetTimeLeft();
 
-        switch (current_sprite_bomb) {
-            case 3 -> current_sprite_bomb = 0;
+
+        switch (current_sprite) {
+            case 3 -> current_sprite = 0;
             default -> {
-                current_sprite_bomb += 1;
+                current_sprite += 1;
             }
         }
-        next = icoBombe[current_sprite_bomb];
+
+        switch (entite) {
+            case "modele.plateau.Bombe" -> {
+                current_sprite_bomb = current_sprite;
+                next = icoBombe[current_sprite_bomb];
+            }
+            case "modele.plateau.Bot" -> {
+                current_sprite_bot = current_sprite;
+                next = icoBot[current_sprite_bot];
+            }
+
+            default -> throw new IllegalStateException("Unexpected value: " + entite);
+        }
 
         return next;
     }

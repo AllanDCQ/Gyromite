@@ -11,8 +11,8 @@ public class Bombe extends EntiteStatique {
     public boolean peutServirDeSupport() { return false; }
 
     @Override
-    public String get_class_string() {
-        return "Bombe";
+    public boolean deplacementAction(Entite next_entite) {
+        return false;
     }
 
 }

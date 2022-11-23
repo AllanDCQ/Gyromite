@@ -9,11 +9,11 @@ public class Corde extends EntiteStatique {
     public boolean peutPermettreDeMonterDescendre() { return true; }
 
     @Override
-    public boolean peutEtreEcrase() { return false; }
+    public boolean deplacementAction(Entite next_entite) {
+        return false;
+    }
 
     @Override
-    public String get_class_string() {
-        return "Corde";
-    }
+    public boolean peutEtreEcrase() { return false; }
 
 }
