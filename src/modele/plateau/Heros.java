@@ -20,10 +20,13 @@ public class Heros extends EntiteDynamique {
     @Override
     public boolean deplacementAction(Entite next_entite) {
         /* Si la prochaine case est une bombe */
-        if (next_entite.getClass().getName().equals("modele.plateau.Bombe")) {
+        if (next_entite instanceof Bombe) {
             jeu.increase_Score();
+            return true;
+        } else {
+            return false;
         }
-        return true;
+
     }
 
 

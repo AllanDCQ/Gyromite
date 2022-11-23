@@ -13,6 +13,8 @@ import java.util.Random;
 public class Bot extends EntiteDynamique {
     private Random r = new Random();
 
+    public boolean sleep_avance;
+
     public Bot(Jeu _jeu) {
         super(_jeu);
     }

@@ -55,9 +55,6 @@ public class Jeu {
     /* Hero's score */
     private int Score;
 
-    /* Stock the old entity on which the hero is */
-    public Entite ancienne_entite = null;
-
 
     public Jeu() {
         initialisationDesEntites();
@@ -93,11 +90,6 @@ public class Jeu {
 
         // Fonction pour load un niveau à partir d'un fichier text
         loadLevel("Levels/00.txt");
-
-        smicks[0] = new Bot(this);
-        addEntite(smicks[0], 15,21);
-        IA.getInstance().addEntiteDynamique(smicks[0]);
-        ordonnanceur.add(IA.getInstance());
 
     }
 
@@ -156,23 +148,14 @@ public class Jeu {
                     /* S'il n'a pas déjà avancé ce tour */
                     if (cmptDeplV.get(e) == null) {
                         /* Si la prochaine case est vide */
-                        if (next_entite == null) {
-                            retour = true;
-                        }
+                        if (next_entite == null) {retour = true;}
                         /* Si la prochaine case n'est pas vide */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
-                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {
-                                retour = true;
-                            }
-
-                            if (e.deplacementAction(next_entite)){
-                                retour = true;
-                            }
-
+                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
+                            else {retour = e.deplacementAction(next_entite);}
 
                         }
-
                         cmptDeplV.put(e, 1);
                     }
                     break;
@@ -180,29 +163,21 @@ public class Jeu {
                 case droite:
                     if (cmptDeplH.get(e) == null) {
                         /* Si la prochaine case est vide */
-                        if (next_entite == null) {
-                            retour = true;
-                        }
+                        if (next_entite == null) {retour = true;}
                         /* Si la prochaine case est une entité */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
-                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {
-                                retour = true;
-                            }
-
-                            if (e.deplacementAction(next_entite)){
-                                retour = true;
-                            }
+                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
+                            else {retour = e.deplacementAction(next_entite);}
                         }
                         cmptDeplH.put(e, 1);
                     }
                     break;
-
             }
         }
 
         if (retour) {
-            deplacerEntite(pCourant, pCible, e);
+            deplacerEntite(pCourant, pCible, (EntiteDynamique) e);
         }
         return retour;
     }
@@ -258,19 +233,19 @@ public class Jeu {
      * @param pCible Point where to move
      * @param e Entity to be moved
      */
-    private void deplacerEntite(Point pCourant, Point pCible, Entite e) {
+    private void deplacerEntite(Point pCourant, Point pCible, EntiteDynamique e) {
 
-        if (ancienne_entite == null) {
+        if (e.ancienne_entite == null) {
             grilleEntites[pCourant.x][pCourant.y] = null;
         } else {
-            if (!ancienne_entite.getClass().getName().equals("modele.plateau.Bombe")) {
-                grilleEntites[pCourant.x][pCourant.y] = ancienne_entite;
+            if (!e.ancienne_entite.peutEtreEcrase()) {
+                grilleEntites[pCourant.x][pCourant.y] = e.ancienne_entite;
             } else {
                 grilleEntites[pCourant.x][pCourant.y] = null;
             }
         }
 
-        ancienne_entite = objetALaPosition(pCible);
+        e.ancienne_entite = objetALaPosition(pCible);
 
         grilleEntites[pCible.x][pCible.y] = e;
         map.put(e, pCible);
@@ -372,6 +347,8 @@ public class Jeu {
         }
 
 
+        Gravite g = new Gravite();
+
         // Create each entite for the corresponding char in the array we got from the txt file
         for(int row = 0; row < array.length; row++){
             for (int col = 0; col < array[row].length; col++) {
@@ -380,8 +357,7 @@ public class Jeu {
                     case 'H':
                         hector = new Heros(this);
                         addEntite(hector, col, row);
-                
-                        Gravite g = new Gravite();
+
                         g.addEntiteDynamique(hector);
                         ordonnanceur.add(g);
                 
@@ -401,8 +377,9 @@ public class Jeu {
                         break;
                     case 'S':
                         smicks.add(new Bot(this));
-                        addEntite(smicks.get(smicks.size() - 1), 15,23);
-                        IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() - 1));
+                        System.out.println(smicks.get(smicks.size() -1));
+                        addEntite(smicks.get(smicks.size() -1), col,row);
+                        IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() -1));
                         ordonnanceur.add(IA.getInstance());
                         break;
                     case 'C':
