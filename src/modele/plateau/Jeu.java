@@ -90,7 +90,7 @@ public class Jeu {
     private void initialisationDesEntites() {
 
         // Fonction pour load un niveau à partir d'un fichier text
-        loadLevel("Levels/01.csv");
+        loadLevel("Levels/02.csv");
 
     }
 
@@ -141,7 +141,6 @@ public class Jeu {
         Point pCible = calculerPointCible(pCourant, d);
         Entite next_entite = objetALaPosition(pCible);
 
-
         if (contenuDansGrille(pCible)) {
             switch (d) {
                 case bas:
@@ -183,6 +182,45 @@ public class Jeu {
         return retour;
     }
 
+        /**
+     * Make the move if the entity is allowed
+     * @param e Selected entity
+     * @param d Direction in which to move
+     */
+    public boolean deplacerColonne(Entite e, Direction d) {
+        boolean retour = false;
+        Point pCourant = map.get(e);
+        Point pCible = calculerPointCible(pCourant, d);
+        Entite next_entite = objetALaPosition(pCible);
+
+        if (contenuDansGrille(pCible)) {
+            switch (d) {
+                case gauche:
+                case droite:
+                    retour = false;
+                    break;
+
+                case bas:
+                case haut:
+                    /* Si la prochaine case est vide */
+                    if (next_entite == null) {retour = true;}
+                    /* Si la prochaine case n'est pas vide */
+                    else {
+                        /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
+                        if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
+                        else {retour = e.deplacementAction(next_entite);}
+
+                    }
+                    cmptDeplV.put(e, 1);
+                    break;
+            }
+        }
+
+        if (retour) {
+            deplacerEntite(pCourant, pCible, (EntiteDynamique) e);
+        }
+        return retour;
+    }
 
     /**
      * Function who return the point in function of the Direction
@@ -356,13 +394,12 @@ public class Jeu {
                         break;
                     case "S":
                         smicks.add(new Bot(this));
-                        System.out.println(smicks.get(smicks.size() -1));
                         addEntite(smicks.get(smicks.size() -1), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() -1));
                         ordonnanceur.add(IA.getInstance());
                         break;
                     case "C":
-                        Colonne tmp_colonne = new Colonne(this);
+                        Colonne tmp_colonne = new Colonne(this, Integer.parseInt(line_info[3]));
                         addEntite(tmp_colonne, Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         ControleColonne.getInstance().addEntiteDynamique(tmp_colonne);
                         ordonnanceur.add(ControleColonne.getInstance());

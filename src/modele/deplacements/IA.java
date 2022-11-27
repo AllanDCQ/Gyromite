@@ -19,13 +19,11 @@ public class IA extends RealisateurDeDeplacement {
     protected boolean realiserDeplacement() {
         boolean ret = false;
         for (EntiteDynamique e : lstEntitesDynamiques) {
-            System.out.println(e);
             for (int dist = 0; dist < 5; dist++) {
                 Entite egauche = e.regarderDansLaDirectionDistance(Direction.gauche, dist);
                 if (egauche != null) {
                     if (egauche.getClass().getName().equals("modele.plateau.Heros")) {
                         directionCourante = Direction.gauche;
-                        System.out.println(directionCourante);
                     }
                 }
 
@@ -33,7 +31,6 @@ public class IA extends RealisateurDeDeplacement {
                 if (edroit != null) {
                     if (edroit.getClass().getName().equals("modele.plateau.Heros")) {
                         directionCourante = Direction.droite;
-                        System.out.println(directionCourante);
                     }
                 }
 

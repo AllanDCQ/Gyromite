@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import modele.plateau.Entite;
 import modele.plateau.EntiteDynamique;
+import modele.plateau.Colonne;
 
 
 /**
@@ -30,7 +31,6 @@ public class ControleColonne extends RealisateurDeDeplacement {
         directionCourante = estEnHaut ? Direction.bas : Direction.haut;
     }
 
-
     protected boolean realiserDeplacement() { 
         boolean ret = false;
         
@@ -44,20 +44,23 @@ public class ControleColonne extends RealisateurDeDeplacement {
                         break;
 
                     case haut:
-                        if (!estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
-                            if (e.avancerDirectionChoisie(Direction.haut)){
-                                ret = true;
+                        for (int i = 0; i < ((Colonne)e).taille; i++){
+                            if (!estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
+                                if (e.avancerDirectionChoisie(Direction.haut)){
+                                    ret = true;
+                                }
                             }
                         }
                         break;
                     case bas:
-                        if (estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
-                            if (e.avancerDirectionChoisie(Direction.bas)){
-                                ret = true;
+                        for (int i = 0; i < ((Colonne)e).taille; i++){
+                            if (estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
+                                if (e.avancerDirectionChoisie(Direction.bas)){
+                                    ret = true;
+                                }
                             }
                         }
                         break;
-
                 }
             }
         }
