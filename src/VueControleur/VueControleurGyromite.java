@@ -41,6 +41,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon icoCorde;
     private ImageIcon icoColonneHaut;
     private ImageIcon icoColonneBas;
+    private ImageIcon icoPlatformV;
 
     private ImageIcon[] icoBombe = new ImageIcon[4];
     private int current_sprite_bomb;
@@ -93,6 +94,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
         icoColonneBas = chargerIcone("Images/tileset.png", 32, 9*16, 16, 16);
         icoBedrock = chargerIcone("Images/tileset.png", 32, 0, 16, 16);
         icoPlatform = chargerIcone("Images/tileset.png", 0, 0, 16, 16);
+        icoPlatformV = chargerIcone("Images/tileset.png", 0, 16, 16, 16);
         icoCorde = chargerIcone("Images/tileset.png", 16, 0, 16, 16);
 
         /* SpriteSheet de la bombe */
@@ -162,6 +164,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     }
                 } else if (jeu.getGrille()[x][y] instanceof Platform) {
                     tabJLabel[x][y].setIcon(icoPlatform);
+                } else if (jeu.getGrille()[x][y] instanceof PlatformV) {
+                    tabJLabel[x][y].setIcon(icoPlatformV);
                 } else if (jeu.getGrille()[x][y] instanceof Bombe) {
                     tabJLabel[x][y].setIcon(next_sprite(current_sprite_bomb, Bombe.class.getName()));
                 } else if (jeu.getGrille()[x][y] instanceof Corde) {

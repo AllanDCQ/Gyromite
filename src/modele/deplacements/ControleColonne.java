@@ -16,7 +16,7 @@ public class ControleColonne extends RealisateurDeDeplacement {
 
     private Direction directionCourante = null;
     private static ControleColonne c3d;
-    private boolean estEnHaut = false;
+    private boolean estEnHaut = true;
     private ArrayList<EntiteDynamique> lstEntitesDynamiquesInverse = new ArrayList<EntiteDynamique>();
 
     public static ControleColonne getInstance() {

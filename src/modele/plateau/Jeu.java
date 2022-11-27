@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +90,7 @@ public class Jeu {
     private void initialisationDesEntites() {
 
         // Fonction pour load un niveau à partir d'un fichier text
-        loadLevel("Levels/00.txt");
+        loadLevel("Levels/01.csv");
 
     }
 
@@ -320,76 +321,59 @@ public class Jeu {
 
     public void loadLevel(String fileName){
 
-        char[][] array = new char[1][];
-
-        //reads all lines of the level file  
-        File file = new File(fileName);
-
-        // open the file 
-        try (FileReader fr = new FileReader(file)) {
-            BufferedReader br = new BufferedReader(fr);
-            
-            // Get the size of the board
-            String[] size = br.readLine().split(" ");
-            array = new char[Integer.parseInt(size[0])][Integer.parseInt(size[1])];
-            
-            // Get the map into char 2D Array 
-            String line;
-            int i = 0;
-            while((line = br.readLine()) != null){
-                //process the line
-                array[i] = line.toCharArray();
-                i++;
-            }
-        } catch (NumberFormatException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-
-        Gravite g = new Gravite();
-
-        // Create each entite for the corresponding char in the array we got from the txt file
-        for(int row = 0; row < array.length; row++){
-            for (int col = 0; col < array[row].length; col++) {
-
-                switch(array[row][col]) {
-                    case 'H':
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(fileName));
+            String line = reader.readLine();
+            while (line != null) {
+                String[] line_info = line.split(",");
+                System.out.println(line_info[0]);
+                switch(line_info[0]) {
+                    case "H":
                         hector = new Heros(this);
-                        addEntite(hector, col, row);
-
+                        addEntite(hector, Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
+                        Gravite g = new Gravite();
                         g.addEntiteDynamique(hector);
                         ordonnanceur.add(g);
                 
                         Controle4Directions.getInstance().addEntiteDynamique(hector);
                         ordonnanceur.add(Controle4Directions.getInstance());
-                    case 'P':
-                        addEntite(new Platform(this), col, row);
                         break;
-                    case 'M':
-                        addEntite(new Mur(this), col, row);
+                    case "P":
+                        addEntite(new Platform(this), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         break;
-                    case 'B':
-                        addEntite(new Bombe(this), col, row);
+                    case "V":
+                        addEntite(new PlatformV(this), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         break;
-                    case 'R':
-                        addEntite(new Corde(this), col, row);
+                    case "M":
+                        addEntite(new Mur(this), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         break;
-                    case 'S':
+                    case "B":
+                        addEntite(new Bombe(this), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
+                        break;
+                    case "R":
+                        addEntite(new Corde(this), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
+                        break;
+                    case "S":
                         smicks.add(new Bot(this));
                         System.out.println(smicks.get(smicks.size() -1));
-                        addEntite(smicks.get(smicks.size() -1), col,row);
+                        addEntite(smicks.get(smicks.size() -1), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() -1));
                         ordonnanceur.add(IA.getInstance());
                         break;
-                    case 'C':
+                    case "C":
                         Colonne tmp_colonne = new Colonne(this);
-                        addEntite(tmp_colonne, col, row);
+                        addEntite(tmp_colonne, Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         ControleColonne.getInstance().addEntiteDynamique(tmp_colonne);
                         ordonnanceur.add(ControleColonne.getInstance());
-                        
+                        break;
                 }
+                // read next line
+                line = reader.readLine();
             }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
