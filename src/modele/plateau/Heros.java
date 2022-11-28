@@ -17,17 +17,7 @@ public class Heros extends EntiteDynamique {
     public boolean peutServirDeSupport() { return true; }
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        /* Si la prochaine case est une bombe */
-        if (next_entite instanceof Bombe) {
-            jeu.increase_Score();
-            return true;
-        } else {
-            return false;
-        }
-
+    public void ecrase() {
+        System.out.println("Heros mort");
     }
-
-
 }

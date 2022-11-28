@@ -152,9 +152,12 @@ public class Jeu {
                         /* Si la prochaine case n'est pas vide */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
-                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
-                            else {retour = e.deplacementAction(next_entite);}
-
+                            if (next_entite.peutEtreEcrase()){
+                                System.out.println("Haut bas ecrase");
+                                ((EntiteDynamique) next_entite).ecrase();
+                                retour = true;
+                            }
+                            else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
                         }
                         cmptDeplV.put(e, 1);
                     }
@@ -167,8 +170,11 @@ public class Jeu {
                         /* Si la prochaine case est une entité */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
-                            if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
-                            else {retour = e.deplacementAction(next_entite);}
+                            if (next_entite.peutEtreEcrase()){
+                                ((EntiteDynamique) next_entite).ecrase();
+                                retour = true;
+                            }
+                            else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
                         }
                         cmptDeplH.put(e, 1);
                     }
@@ -207,8 +213,10 @@ public class Jeu {
                     /* Si la prochaine case n'est pas vide */
                     else {
                         /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
-                        if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
-                        else {retour = e.deplacementAction(next_entite);}
+                        if (next_entite.peutEtreEcrase()) {
+                            ((EntiteDynamique) next_entite).ecrase();
+                            retour = true;
+                        }
 
                     }
                     cmptDeplV.put(e, 1);
@@ -236,7 +244,6 @@ public class Jeu {
             case bas : pCible = new Point(pCourant.x, pCourant.y + 1); break;
             case gauche : pCible = new Point(pCourant.x - 1, pCourant.y); break;
             case droite : pCible = new Point(pCourant.x + 1, pCourant.y); break;     
-            
         }
         
         return pCible;
@@ -258,7 +265,6 @@ public class Jeu {
             case bas : pCible = new Point(pCourant.x, pCourant.y + 1  + distance); break;
             case gauche : pCible = new Point(pCourant.x - 1 - distance, pCourant.y); break;
             case droite : pCible = new Point(pCourant.x + 1 + distance, pCourant.y); break;
-
         }
 
         return pCible;
@@ -365,7 +371,6 @@ public class Jeu {
             String line = reader.readLine();
             while (line != null) {
                 String[] line_info = line.split(",");
-                System.out.println(line_info[0]);
                 switch(line_info[0]) {
                     case "H":
                         hector = new Heros(this);

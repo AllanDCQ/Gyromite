@@ -22,4 +22,6 @@ public abstract class EntiteDynamique extends Entite {
         return jeu.regarderDansLaDirectionDistance(this, d, distance);
     }
 
+    public abstract void ecrase();
+
 }

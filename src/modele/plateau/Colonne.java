@@ -12,15 +12,15 @@ public class Colonne extends EntiteDynamique {
 
     public boolean peutEtreEcrase() { return false; }
     public boolean peutServirDeSupport() { return true; }
-    public boolean peutPermettreDeMonterDescendre() { return false; }
+    public boolean peutPermettreDeMonterDescendre() { return false;}
 
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        return false;
-    }
     @Override
     public boolean avancerDirectionChoisie(Direction d) {
         return jeu.deplacerColonne(this, d);
+    }
+
+    public void ecrase() {
+        System.out.println("Colonne ecrase"); // Jamais sense de produire
     }
 
 }

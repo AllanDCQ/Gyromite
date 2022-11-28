@@ -1,17 +1,5 @@
 package modele.plateau;
 
-public class PlatformV extends EntiteDynamique {
+public class PlatformV extends EntiteStatique {
     public PlatformV(Jeu _jeu) { super(_jeu); }
-
-    public boolean peutEtreEcrase() { return false; }
-    public boolean peutServirDeSupport() { return true; }
-    public boolean peutPermettreDeMonterDescendre() { return false; }
-
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        return false;
-    }
-
-    public int tailleColone;
-
 }

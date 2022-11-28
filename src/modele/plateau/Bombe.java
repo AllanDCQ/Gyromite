@@ -1,6 +1,6 @@
 package modele.plateau;
 
-public class Bombe extends EntiteStatique {
+public class Bombe extends EntiteDynamique {
 
     public Bombe(Jeu _jeu) { super(_jeu); }
 
@@ -11,8 +11,11 @@ public class Bombe extends EntiteStatique {
     public boolean peutServirDeSupport() { return false; }
 
     @Override
-    public boolean deplacementAction(Entite next_entite) {
-        return false;
+    public boolean peutPermettreDeMonterDescendre() { return false; }
+
+    public void ecrase() {
+        System.out.println("Bombe recolte");
+        jeu.increase_Score();
     }
 
 }
