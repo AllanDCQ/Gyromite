@@ -6,6 +6,8 @@
 package modele.plateau;
 
 import modele.deplacements.Direction;
+import modele.deplacements.Controle4Directions;
+import modele.deplacements.Gravite;
 
 /**
  * Héros du jeu
@@ -20,8 +22,11 @@ public class Heros extends EntiteDynamique {
     public boolean peutServirDeSupport() { return false; }
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
-    public void ecrase() {
-        System.out.println("Heros mort");
+    public boolean ecrase(Entite e) {
+        jeu.ecraseEntite(this);
+        Controle4Directions.getInstance().removeEntiteDynamique(this);
+        Gravite.getInstance().removeEntiteDynamique(this);
+        return true;
     }
 
 }

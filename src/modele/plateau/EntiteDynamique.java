@@ -68,6 +68,6 @@ public abstract class EntiteDynamique extends Entite {
 
     public Entite getHero() {return jeu.getHector();}
 
-    public abstract void ecrase();
+    public abstract boolean ecrase(Entite e);
 
 }

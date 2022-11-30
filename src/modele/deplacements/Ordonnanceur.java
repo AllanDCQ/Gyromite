@@ -11,9 +11,7 @@ public class Ordonnanceur extends Observable implements Runnable {
     private Jeu jeu;
     private ArrayList<RealisateurDeDeplacement> lstDeplacements = new ArrayList<RealisateurDeDeplacement>();
     private long pause;
-    public void add(RealisateurDeDeplacement deplacement) {
-        lstDeplacements.add(deplacement);
-    }
+    public void add(RealisateurDeDeplacement deplacement) {lstDeplacements.add(deplacement);}
 
     public Ordonnanceur(Jeu _jeu) {
         jeu = _jeu;

@@ -6,6 +6,8 @@
 package modele.plateau;
 
 import modele.deplacements.Direction;
+import modele.deplacements.IA;
+import modele.deplacements.Gravite;
 
 import java.util.Random;
 
@@ -40,8 +42,16 @@ public class Bot extends EntiteDynamique {
         return false;
     }
 
-    public void ecrase() {
-        System.out.println("Bot ecrase");
+    public boolean ecrase(Entite e) {
+        if (e == jeu.getHector()){
+            jeu.getHector().ecrase(this);
+            return false;
+        }else{
+            jeu.ecraseEntite(this);
+            IA.getInstance().removeEntiteDynamique(this);
+            Gravite.getInstance().removeEntiteDynamique(this);
+            return true;
+        }
     }
 
 }

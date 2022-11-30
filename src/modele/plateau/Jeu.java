@@ -29,8 +29,8 @@ import java.util.Arrays;
  */
 public class Jeu {
 
-    public static final int SIZE_X = 25;
-    public static final int SIZE_Y = 25;
+    public static final int SIZE_X = 24;
+    public static final int SIZE_Y = 12;
 
     // compteur de déplacements horizontal et vertical (1 max par défaut, à chaque pas de temps)
     private HashMap<Entite, Integer> cmptDeplH = new HashMap<Entite, Integer>();
@@ -90,7 +90,7 @@ public class Jeu {
     private void initialisationDesEntites() {
 
         // Fonction pour load un niveau à partir d'un fichier text
-        loadLevel("Levels/02.csv");
+        loadLevel("Levels/03.csv");
 
     }
 
@@ -104,6 +104,12 @@ public class Jeu {
     private void addEntite(Entite e, int x, int y) {
         grilleEntites[x][y] = e;
         map.put(e, new Point(x, y));
+    }
+
+    public void ecraseEntite(EntiteDynamique e){
+        Point position = map.get(e);
+        map.remove(e);
+        grilleEntites[position.x][position.y] = null;
     }
 
 
@@ -154,7 +160,7 @@ public class Jeu {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase()){
                                 System.out.println("Haut bas ecrase");
-                                ((EntiteDynamique) next_entite).ecrase();
+                                ((EntiteDynamique) next_entite).ecrase(e);
                                 retour = true;
                             }
                             else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
@@ -171,7 +177,7 @@ public class Jeu {
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase()){
-                                ((EntiteDynamique) next_entite).ecrase();
+                                ((EntiteDynamique) next_entite).ecrase(e);
                                 retour = true;
                             }
                             else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
@@ -182,12 +188,8 @@ public class Jeu {
                     break;
             }
         }
-
+    
         if (retour) {
-            // Autorisation du chargé de TP pour utiliser exceptionnellement un instanceof
-            if(next_entite instanceof Bombe && e instanceof Heros) {
-                increase_Score();
-            }
             deplacerEntite(pCourant, pCible, (EntiteDynamique) e);
         }
         return retour;
@@ -219,7 +221,7 @@ public class Jeu {
                     else {
                         /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                         if (next_entite.peutEtreEcrase()) {
-                            ((EntiteDynamique) next_entite).ecrase(); //Pas une colonne
+                            ((EntiteDynamique) next_entite).ecrase(e); //Pas une colonne
                             retour = true;
                         }
 
@@ -285,17 +287,9 @@ public class Jeu {
      */
     private void deplacerEntite(Point pCourant, Point pCible, EntiteDynamique e) {
 
-        if (e.getAncienne_entite() == null) {
-            grilleEntites[pCourant.x][pCourant.y] = null;
-        } else {
-            if (!e.getAncienne_entite().peutEtreEcrase()) {
-                grilleEntites[pCourant.x][pCourant.y] = e.getAncienne_entite();
-            } else {
-                grilleEntites[pCourant.x][pCourant.y] = null;
-            }
-        }
+        grilleEntites[pCourant.x][pCourant.y] = e.getAncienne_entite();
 
-        e.setAncienne_entite( objetALaPosition(pCible));
+        e.setAncienne_entite(objetALaPosition(pCible));
 
         grilleEntites[pCible.x][pCible.y] = e;
         map.put(e, pCible);
@@ -379,9 +373,8 @@ public class Jeu {
                     case "H":
                         hector = new Heros(this);
                         addEntite(hector, Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
-                        Gravite g = new Gravite();
-                        g.addEntiteDynamique(hector);
-                        ordonnanceur.add(g);
+                        Gravite.getInstance().addEntiteDynamique(hector);
+                        ordonnanceur.add(Gravite.getInstance());
 
                         Controle4Directions.getInstance().addEntiteDynamique(hector);
                         ordonnanceur.add(Controle4Directions.getInstance());
@@ -402,10 +395,14 @@ public class Jeu {
                         addEntite(new Corde(this), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         break;
                     case "S":
-                        smicks.add(new Bot(this));
-                        addEntite(smicks.get(smicks.size() -1), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
-                        IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() -1));
+                        EntiteDynamique smick = (new Bot(this));
+                        smicks.add(0,(Bot)smick);
+                        addEntite(smicks.get(0), Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
+                        IA.getInstance().addEntiteDynamique(smicks.get(0));
                         ordonnanceur.add(IA.getInstance());
+                        Gravite.getInstance().addEntiteDynamique(smicks.get(0));
+                        ordonnanceur.add(Gravite.getInstance());
+
                         break;
                     case "C":
                         Colonne tmp_colonne = new Colonne(this, Integer.parseInt(line_info[3]));

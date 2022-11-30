@@ -127,7 +127,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     private void placerLesComposantsGraphiques() {
         setTitle("Gyromite");
-        setSize(900, 960);
+        setSize(1200, 600+60);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
 
         /* Initialization and Add father Panel (father layout) */
@@ -243,7 +243,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
             return null;
         }
 
-        return new ImageIcon(image.getScaledInstance(900/sizeX, 900/sizeY, java.awt.Image.SCALE_SMOOTH));
+        return new ImageIcon(image.getScaledInstance(1200/sizeX, 600/sizeY, java.awt.Image.SCALE_SMOOTH));
     }
 
     // chargement d'une sous partie de l'image
@@ -251,12 +251,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
         // charger une sous partie de l'image à partir de ses coordonnées dans urlIcone
         BufferedImage bi = getSubImage(urlIcone, x, y, w, h);
         // adapter la taille de l'image a la taille du composant (ici : 20x20)
-        return new ImageIcon(bi.getScaledInstance(900/sizeX, 900/sizeY,java.awt.Image.SCALE_SMOOTH));
-    }
-
-    private ImageIcon chargerIconeNumber(String urlIcone, int x, int y, int w, int h) {
-        BufferedImage bi = getSubImage(urlIcone, x, y, w, h);
-        return new ImageIcon(bi.getScaledInstance(350/sizeX, 350/sizeY,java.awt.Image.SCALE_SMOOTH));
+        return new ImageIcon(bi.getScaledInstance(1200/sizeX, 600/sizeY, java.awt.Image.SCALE_SMOOTH));
     }
 
     private BufferedImage getSubImage(String urlIcone, int x, int y, int w, int h) {
@@ -311,8 +306,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
      * @return the GridLayout composed of JLabel
      */
     private JPanel component_gameBoard() {
-        JPanel grille = new JPanel(new GridLayout(sizeX, sizeY));
-        grille.setPreferredSize(new Dimension(sizeX,900));
+        JPanel grille = new JPanel(new GridLayout(sizeY, sizeX));
+        grille.setPreferredSize(new Dimension(sizeX, 900));
 
         tabJLabel = new JLabel[sizeX][sizeY];
         for (int y = 0; y < sizeY; y++) {

@@ -16,9 +16,14 @@ public class Bombe extends EntiteDynamique {
     @Override
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
-    public void ecrase() {
-        System.out.println("Bombe recolte");
-        jeu.increase_Score();
+    public boolean ecrase(Entite e ) {
+        if (e == jeu.getHector()){
+            System.out.println("Bombe recolte");
+            jeu.ecraseEntite(this);
+            jeu.increase_Score();
+            return true;
+        }
+        return false;
     }
 
 }
