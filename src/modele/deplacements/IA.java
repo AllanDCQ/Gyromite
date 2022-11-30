@@ -54,11 +54,8 @@ public class IA extends RealisateurDeDeplacement {
                 if (entiteArround != null && entiteArround.equals(e.getHero())) {
                     if (ancienneDirection != entiteArroundDirection) {
                         ancienneDirection = entiteArroundDirection;
-                        System.out.printf("Hero repéré à" + entiteArroundDirection);
-                        System.out.println();
                         // Ne fait que se retourner et n'avance pas
                     } else {
-                        System.out.printf("Hero repéré à" + entiteArroundDirection);
                         e.avancerDirectionChoisie(ancienneDirection);
                     }
                     hero_located = true;
@@ -70,8 +67,6 @@ public class IA extends RealisateurDeDeplacement {
                 for (Entite entitesCibles : lstEntitesCibles) {
                     if (entitesCibles != null && entitesCibles.equals(e.getHero())) {
                         e.avancerDirectionChoisie(ancienneDirection);
-                        System.out.printf("Hero repéré devant dans distance de vision :" + distanceVision);
-                        System.out.println();
                         hero_located = true;
                     }
                 }
@@ -108,11 +103,11 @@ public class IA extends RealisateurDeDeplacement {
         List<Integer> lstPriorities = new ArrayList<Integer>();
 
         if(bot.getDirectionUpward()) {
-            lstPriorities.addAll((Arrays.asList(2, 0, 1, 3)));
+            lstPriorities.addAll((Arrays.asList(0, 1, 2, 3)));
         } else if(bot.getDirectionDescent()) {
-            lstPriorities.addAll((Arrays.asList(3, 0, 1, 2)));
+            lstPriorities.addAll((Arrays.asList(0, 1, 3, 2)));
         } else {
-            lstPriorities.addAll((Arrays.asList(3, 2, 0, 1)));
+            lstPriorities.addAll((Arrays.asList(2, 3, 0, 1)));
         }
 
         boolean endBoucle = false;
@@ -129,7 +124,6 @@ public class IA extends RealisateurDeDeplacement {
                         endBoucle = true;
                     } else if(entiteBasDevantDerriere.get(i) != null && entiteBasDevantDerriere.get(i).peutServirDeSupport()) {
                         if(lstEntitesArround.get(i) == null || (lstEntitesArround.get(i) != null && lstEntitesArround.get(i).peutEtreEcrase())) {
-                            System.out.println("Oui");
                             bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(i));
                             bot.setDirectionDescent(false);
                             bot.setDirectionUpward(false);

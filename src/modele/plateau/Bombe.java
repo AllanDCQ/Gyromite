@@ -2,7 +2,10 @@ package modele.plateau;
 
 public class Bombe extends EntiteDynamique {
 
-    public Bombe(Jeu _jeu) { super(_jeu); }
+    public Bombe(Jeu _jeu) {
+        super(_jeu);
+        speed = 0;
+    }
 
     @Override
     public boolean peutEtreEcrase() { return true; }

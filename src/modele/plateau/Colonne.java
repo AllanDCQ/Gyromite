@@ -5,6 +5,7 @@ public class Colonne extends EntiteDynamique {
     public Colonne(Jeu _jeu, int _taille) { 
         super(_jeu); 
         this.taille = _taille;
+        speed = 1;
     }
 
     public int taille;

@@ -25,6 +25,7 @@ public class Bot extends EntiteDynamique {
     public Bot(Jeu _jeu) {
         super(_jeu);
         directionCourante = Direction.droite;
+        speed = 10;
     }
 
     public boolean peutEtreEcrase() {

@@ -13,6 +13,7 @@ import modele.deplacements.Direction;
 public class Heros extends EntiteDynamique {
     public Heros(Jeu _jeu) {
         super(_jeu);
+        speed = 1;
     }
 
     public boolean peutEtreEcrase() { return true; }

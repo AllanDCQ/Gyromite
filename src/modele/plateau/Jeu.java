@@ -51,7 +51,7 @@ public class Jeu {
         /* Variable of time sleep in ms between each loop */
         private int Slepp_ms;
         /* Variable used to calculate the loop */
-        private int Time_wait = 0; //
+        public int Time_wait = 0; //
 
     /* Hero's score */
     private int Score;

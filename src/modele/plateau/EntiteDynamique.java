@@ -10,6 +10,8 @@ public abstract class EntiteDynamique extends Entite {
     /* Stock the old entity on which the hero is */
     private Entite ancienne_entite;
 
+    protected int speed;
+
     protected Direction directionCourante;
 
     protected boolean directionUpward;
@@ -21,7 +23,9 @@ public abstract class EntiteDynamique extends Entite {
     }
 
     public boolean avancerDirectionChoisie(Direction d) {
-        return jeu.deplacerEntite(this, d);
+        if(jeu.Time_wait%speed == 0) {
+            return jeu.deplacerEntite(this, d);
+        } else return false;
     }
 
     public Entite regarderDansLaDirection(Direction d) {return jeu.regarderDansLaDirection(this, d);}
@@ -43,7 +47,9 @@ public abstract class EntiteDynamique extends Entite {
         return directionCourante;
     }
     public void setDirectionCourante(Direction directionCourante) {
-        this.directionCourante = directionCourante;
+        if(jeu.Time_wait%speed == 0) {
+            this.directionCourante = directionCourante;
+        }
     }
 
     public Entite getAncienne_entite() {
