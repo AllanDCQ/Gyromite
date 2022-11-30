@@ -8,6 +8,7 @@ import modele.plateau.EntiteDynamique;
  */
 public class Controle4Directions extends RealisateurDeDeplacement {
     private Direction directionCourante;
+    private Direction lastDirection = Direction.droite;
     // Design pattern singleton
     private static Controle4Directions c3d;
 
@@ -20,6 +21,7 @@ public class Controle4Directions extends RealisateurDeDeplacement {
 
     public void setDirectionCourante(Direction _directionCourante) {
         directionCourante = _directionCourante;
+        lastDirection = directionCourante;
     }
 
     public boolean realiserDeplacement() {
@@ -60,4 +62,6 @@ public class Controle4Directions extends RealisateurDeDeplacement {
     public void resetDirection() {
         directionCourante = null;
     }
+
+    public Direction getDirection() {return lastDirection;}
 }
