@@ -193,7 +193,7 @@ public class Jeu {
      * @param e Selected entity
      * @param d Direction in which to move
      */
-    public boolean deplacerColonne(Entite e, Direction d) {
+    public boolean deplacerColonne(Colonne e, Direction d) {
         boolean retour = false;
         Point pCourant = map.get(e);
         Point pCible = calculerPointCible(pCourant, d);
@@ -214,7 +214,7 @@ public class Jeu {
                     else {
                         /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                         if (next_entite.peutEtreEcrase()) {
-                            ((EntiteDynamique) next_entite).ecrase();
+                            ((EntiteDynamique) next_entite).ecrase(); //Pas une colonne
                             retour = true;
                         }
 

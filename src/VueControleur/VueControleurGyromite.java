@@ -36,6 +36,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon icoHeroGauche;
     private ImageIcon icoHeroDroite;
     private ImageIcon icoHeroCorde;
+    private ImageIcon icoHeroNeutre;
     private ImageIcon icoVide;
     private ImageIcon icoColonne;
     private ImageIcon icoColonneHautAttacher;
@@ -91,6 +92,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private void chargerLesIcones() {
         icoHeroGauche = chargerIcone("Images/player_ca_gauche.png", 0, 0, 32, 46);
         icoHeroDroite = chargerIcone("Images/player_ca_droite.png", 160, 0, 32, 46);
+        icoHeroNeutre = chargerIcone("Images/player_ca_gauche.png", 163, 0, 26, 46);
         icoHeroCorde = chargerIcone("Images/player_ca_gauche.png", 0, 88, 32, 46);
     
         //icoBot = chargerIcone("Images/smick.png", 0, 0, 20, 20);//chargerIcone("Images/Pacman.png");
@@ -153,11 +155,11 @@ public class VueControleurGyromite extends JFrame implements Observer {
             for (int y = 0; y < sizeY; y++) {
                 if (jeu.getGrille()[x][y] instanceof Heros) { // si la grille du modèle contient un Pacman, on associe l'icône Pacman du côté de la vue
                     Direction d = Controle4Directions.getInstance().getDirection();
-                    System.out.println(d);
                     if ((jeu.getGrille()[x][y - 1] instanceof Corde) || (jeu.getGrille()[x][y + 1] instanceof Corde)) tabJLabel[x][y].setIcon(icoHeroCorde);
                     else {
                         if (d == Direction.gauche) tabJLabel[x][y].setIcon(icoHeroGauche);
                         else if (d == Direction.droite) tabJLabel[x][y].setIcon(icoHeroDroite);
+                        else tabJLabel[x][y].setIcon(icoHeroNeutre);
                     }
 
                     // si transparence : images avec canal alpha + dessins manuels (voir ci-dessous + créer composant qui redéfinie paint(Graphics g)), se documenter
