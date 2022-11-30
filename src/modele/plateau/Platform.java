@@ -1,10 +1,8 @@
 package modele.plateau;
 
+import modele.deplacements.Direction;
+
 public class Platform extends EntiteStatique {
     public Platform(Jeu _jeu) { super(_jeu); }
 
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        return false;
-    }
 }

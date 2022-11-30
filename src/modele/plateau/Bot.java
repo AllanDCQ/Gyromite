@@ -5,6 +5,8 @@
  */
 package modele.plateau;
 
+import modele.deplacements.Direction;
+
 import java.util.Random;
 
 /**
@@ -13,19 +15,20 @@ import java.util.Random;
 public class Bot extends EntiteDynamique {
     private Random r = new Random();
 
+    /*
+     * La direction va de gauche à droite ou de droite à gauche.
+     * Lorsqu'il rencontre un obstacle le sens change ou qu'il perd de vue le hero
+     */
+
     public boolean sleep_avance;
 
     public Bot(Jeu _jeu) {
         super(_jeu);
+        directionCourante = Direction.droite;
     }
 
     public boolean peutEtreEcrase() { return false; }
     public boolean peutServirDeSupport() { return true; }
     public boolean peutPermettreDeMonterDescendre() { return false; }
-
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        return false;
-    }
 
 }

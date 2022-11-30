@@ -1,5 +1,7 @@
 package modele.plateau;
 
+import modele.deplacements.Direction;
+
 public class Bombe extends EntiteStatique {
 
     public Bombe(Jeu _jeu) { super(_jeu); }
@@ -9,10 +11,5 @@ public class Bombe extends EntiteStatique {
 
     @Override
     public boolean peutServirDeSupport() { return false; }
-
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        return false;
-    }
 
 }

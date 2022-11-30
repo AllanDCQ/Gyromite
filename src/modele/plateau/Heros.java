@@ -5,6 +5,8 @@
  */
 package modele.plateau;
 
+import modele.deplacements.Direction;
+
 /**
  * Héros du jeu
  */
@@ -16,18 +18,5 @@ public class Heros extends EntiteDynamique {
     public boolean peutEtreEcrase() { return true; }
     public boolean peutServirDeSupport() { return true; }
     public boolean peutPermettreDeMonterDescendre() { return false; }
-
-    @Override
-    public boolean deplacementAction(Entite next_entite) {
-        /* Si la prochaine case est une bombe */
-        if (next_entite instanceof Bombe) {
-            jeu.increase_Score();
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
 
 }

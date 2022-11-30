@@ -3,6 +3,9 @@ Projet LIFPOO
 
 ## Liste de choses à faire :
 
+Demander au prof :
+  Est-ce que mettre une variable int current_sprite dans EntiteDynamique c'est rompre le MCV ?
+
 #### Généralités :
 - Gestion des collisions (Prof. / Smicks, Smicks / Murs, Smicks / Smicks)
 - Système de points (ALLAN)

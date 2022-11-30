@@ -8,18 +8,57 @@ import modele.deplacements.Direction;
 public abstract class EntiteDynamique extends Entite {
 
     /* Stock the old entity on which the hero is */
-    public Entite ancienne_entite = null;
+    private Entite ancienne_entite;
 
+    protected Direction directionCourante;
 
-    public EntiteDynamique(Jeu _jeu) { super(_jeu); }
+    protected boolean directionUpward;
+    protected boolean directionDescent;
+
+    public EntiteDynamique(Jeu _jeu) {
+        super(_jeu);
+        ancienne_entite = null;
+    }
 
     public boolean avancerDirectionChoisie(Direction d) {
         return jeu.deplacerEntite(this, d);
     }
-    public Entite regarderDansLaDirection(Direction d) {return jeu.regarderDansLaDirection(this, d);}
 
+    public Entite regarderDansLaDirection(Direction d) {return jeu.regarderDansLaDirection(this, d);}
+    public Entite regarderDansLaDirectionDouble(Direction d1, Direction d2) {
+        Entite prevision =  jeu.regarderDansLaDirection(this, d1);
+        if(prevision != null) {
+            prevision = jeu.regarderDansLaDirection(prevision, d2);
+            return prevision;
+        }
+        else {
+            return null;
+        }
+    }
     public Entite regarderDansLaDirectionDistance(Direction d, int distance) {
         return jeu.regarderDansLaDirectionDistance(this, d, distance);
     }
 
+    public Direction getDirectionCourante() {
+        return directionCourante;
+    }
+    public void setDirectionCourante(Direction directionCourante) {
+        this.directionCourante = directionCourante;
+    }
+
+    public Entite getAncienne_entite() {
+        return ancienne_entite;
+    }
+    public void setAncienne_entite(Entite ancienne_entite) {
+        this.ancienne_entite = ancienne_entite;
+    }
+
+    public Boolean getDirectionUpward() { return directionUpward; }
+    public void setDirectionUpward(boolean directionUpward) { this.directionUpward = directionUpward;}
+
+    public Boolean getDirectionDescent() { return directionDescent; }
+    public void setDirectionDescent(boolean directionDescent) { this.directionDescent = directionDescent;}
+
+
+    public Entite getHero() {return jeu.getHector();}
 }

@@ -38,7 +38,7 @@ public class Jeu {
     private Heros hector;
     private ArrayList<Bot> smicks = new ArrayList<Bot>();
 
-    private HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
+    protected HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Entite[][] grilleEntites = new Entite[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
 
     private Ordonnanceur ordonnanceur = new Ordonnanceur(this);
@@ -153,7 +153,7 @@ public class Jeu {
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
-                            else {retour = e.deplacementAction(next_entite);}
+                            else {retour = false;}
 
                         }
                         cmptDeplV.put(e, 1);
@@ -168,7 +168,7 @@ public class Jeu {
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase() || next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
-                            else {retour = e.deplacementAction(next_entite);}
+                            else {retour = false;}
                         }
                         cmptDeplH.put(e, 1);
                     }
@@ -177,6 +177,10 @@ public class Jeu {
         }
 
         if (retour) {
+            // Autorisation du chargé de TP pour utiliser exceptionnellement un instanceof
+            if(next_entite instanceof Bombe && e instanceof Heros) {
+                increase_Score();
+            }
             deplacerEntite(pCourant, pCible, (EntiteDynamique) e);
         }
         return retour;
@@ -235,17 +239,17 @@ public class Jeu {
      */
     private void deplacerEntite(Point pCourant, Point pCible, EntiteDynamique e) {
 
-        if (e.ancienne_entite == null) {
+        if (e.getAncienne_entite() == null) {
             grilleEntites[pCourant.x][pCourant.y] = null;
         } else {
-            if (!e.ancienne_entite.peutEtreEcrase()) {
-                grilleEntites[pCourant.x][pCourant.y] = e.ancienne_entite;
+            if (!e.getAncienne_entite().peutEtreEcrase()) {
+                grilleEntites[pCourant.x][pCourant.y] = e.getAncienne_entite();
             } else {
                 grilleEntites[pCourant.x][pCourant.y] = null;
             }
         }
 
-        e.ancienne_entite = objetALaPosition(pCible);
+        e.setAncienne_entite( objetALaPosition(pCible));
 
         grilleEntites[pCible.x][pCible.y] = e;
         map.put(e, pCible);
@@ -263,7 +267,7 @@ public class Jeu {
      * @param p the point to be analyzed
      * @return The entity at the given point
      */
-    private Entite objetALaPosition(Point p) {
+    public Entite objetALaPosition(Point p) {
         Entite retour = null;
         
         if (contenuDansGrille(p)) {
@@ -348,6 +352,7 @@ public class Jeu {
 
 
         Gravite g = new Gravite();
+        ordonnanceur.add(g);
 
         // Create each entite for the corresponding char in the array we got from the txt file
         for(int row = 0; row < array.length; row++){
@@ -359,10 +364,9 @@ public class Jeu {
                         addEntite(hector, col, row);
 
                         g.addEntiteDynamique(hector);
-                        ordonnanceur.add(g);
-                
                         Controle4Directions.getInstance().addEntiteDynamique(hector);
                         ordonnanceur.add(Controle4Directions.getInstance());
+
                     case 'P':
                         addEntite(new Platform(this), col, row);
                         break;
@@ -376,10 +380,11 @@ public class Jeu {
                         addEntite(new Corde(this), col, row);
                         break;
                     case 'S':
-                        smicks.add(new Bot(this));
-                        System.out.println(smicks.get(smicks.size() -1));
-                        addEntite(smicks.get(smicks.size() -1), col,row);
-                        IA.getInstance().addEntiteDynamique(smicks.get(smicks.size() -1));
+                        smicks.add(0,new Bot(this));
+                        Bot smick = smicks.get(0);
+                        addEntite(smick, col,row);
+                        g.addEntiteDynamique(smick);
+                        IA.getInstance().addEntiteDynamique(smick);
                         ordonnanceur.add(IA.getInstance());
                         break;
                     case 'C':
@@ -387,7 +392,7 @@ public class Jeu {
                         addEntite(tmp_colonne, col, row);
                         ControleColonne.getInstance().addEntiteDynamique(tmp_colonne);
                         ordonnanceur.add(ControleColonne.getInstance());
-                        
+
                 }
             }
         }
