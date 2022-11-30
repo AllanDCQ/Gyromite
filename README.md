@@ -46,3 +46,10 @@ Demander au prof :
   toutes les collisions associés ;
 - Gestion de la transparence (canal alpha, dessiner le composant case), reprise des annimations (sprites
   disponibles)
+
+
+## Notes:
+  - Smick Vol
+  - Smick prend la bombe
+  - Colonne monte de block pas de une case
+  - Colone ecrase joueur

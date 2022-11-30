@@ -16,7 +16,11 @@ public class Heros extends EntiteDynamique {
     }
 
     public boolean peutEtreEcrase() { return true; }
-    public boolean peutServirDeSupport() { return true; }
+    public boolean peutServirDeSupport() { return false; }
     public boolean peutPermettreDeMonterDescendre() { return false; }
+
+    public void ecrase() {
+        System.out.println("Heros mort");
+    }
 
 }

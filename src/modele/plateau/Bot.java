@@ -27,8 +27,20 @@ public class Bot extends EntiteDynamique {
         directionCourante = Direction.droite;
     }
 
-    public boolean peutEtreEcrase() { return false; }
-    public boolean peutServirDeSupport() { return true; }
-    public boolean peutPermettreDeMonterDescendre() { return false; }
+    public boolean peutEtreEcrase() {
+        return true;
+    }
+
+    public boolean peutServirDeSupport() {
+        return true;
+    }
+
+    public boolean peutPermettreDeMonterDescendre() {
+        return false;
+    }
+
+    public void ecrase() {
+        System.out.println("Bot ecrase");
+    }
 
 }

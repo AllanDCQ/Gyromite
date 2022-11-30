@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import modele.plateau.Entite;
 import modele.plateau.EntiteDynamique;
+import modele.plateau.Colonne;
 
 
 /**
@@ -16,7 +17,7 @@ public class ControleColonne extends RealisateurDeDeplacement {
 
     private Direction directionCourante = null;
     private static ControleColonne c3d;
-    private boolean estEnHaut = false;
+    private boolean estEnHaut = true;
     private ArrayList<EntiteDynamique> lstEntitesDynamiquesInverse = new ArrayList<EntiteDynamique>();
 
     public static ControleColonne getInstance() {
@@ -29,7 +30,6 @@ public class ControleColonne extends RealisateurDeDeplacement {
     public void setDirectionCourante() {
         directionCourante = estEnHaut ? Direction.bas : Direction.haut;
     }
-
 
     protected boolean realiserDeplacement() { 
         boolean ret = false;
@@ -44,20 +44,27 @@ public class ControleColonne extends RealisateurDeDeplacement {
                         break;
 
                     case haut:
-                        if (!estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
-                            if (e.avancerDirectionChoisie(Direction.haut)){
-                                ret = true;
+                        // repeter N fois avec N la taille de la colonne a laquelle cette entite apartient
+                        for (int i = 0; i < ((Colonne)e).taille; i++){
+                            if (!estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
+                                // la colonne et EN BAS, et lentite apres et null ou ecrasable
+                                if (e.avancerDirectionChoisie(Direction.haut)){
+                                    ret = true;
+                                }
                             }
                         }
                         break;
                     case bas:
-                        if (estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
-                            if (e.avancerDirectionChoisie(Direction.bas)){
-                                ret = true;
+                        // repeter N fois avec N la taille de la colonne a laquelle cette entite apartient
+                        for (int i = 0; i < ((Colonne)e).taille; i++){
+                            if (estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
+                                // la colonne et EN HAUT, et lentite apres et null ou ecrasable
+                                if (e.avancerDirectionChoisie(Direction.bas)){
+                                    ret = true;
+                                }
                             }
                         }
                         break;
-
                 }
             }
         }
@@ -66,9 +73,12 @@ public class ControleColonne extends RealisateurDeDeplacement {
     }
 
     @Override
+    // possibilite de reduire le temps de cette fonction en ajoutant la nouvelle entite dans l'ordre inverse
+    // [ nouvelleEntite , ...] [ ... , nouvelleEntite ]
     public void addEntiteDynamique(EntiteDynamique ed) {
         lstEntitesDynamiques.add(ed);
         lstEntitesDynamiquesInverse.addAll(lstEntitesDynamiques);
+        // Stocker linverse de la liste des colone pour bouger les colone de bas en haut dans lordre inverse que de haut en bas
         Collections.reverse(lstEntitesDynamiquesInverse);
     };
 }

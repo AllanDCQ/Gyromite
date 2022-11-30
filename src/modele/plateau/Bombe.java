@@ -1,8 +1,6 @@
 package modele.plateau;
 
-import modele.deplacements.Direction;
-
-public class Bombe extends EntiteStatique {
+public class Bombe extends EntiteDynamique {
 
     public Bombe(Jeu _jeu) { super(_jeu); }
 
@@ -11,5 +9,13 @@ public class Bombe extends EntiteStatique {
 
     @Override
     public boolean peutServirDeSupport() { return false; }
+
+    @Override
+    public boolean peutPermettreDeMonterDescendre() { return false; }
+
+    public void ecrase() {
+        System.out.println("Bombe recolte");
+        jeu.increase_Score();
+    }
 
 }
