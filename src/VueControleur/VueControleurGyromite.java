@@ -36,12 +36,16 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon icoHero;
     private ImageIcon icoVide;
     private ImageIcon icoColonne;
+    private ImageIcon icoColonneHautAttacher;
+    private ImageIcon icoColonneBasAttacher;
     private ImageIcon icoBedrock;
     private ImageIcon icoPlatform;
     private ImageIcon icoCorde;
     private ImageIcon icoColonneHaut;
     private ImageIcon icoColonneBas;
     private ImageIcon icoPlatformV;
+    private ImageIcon icoPlatformColoneGauche;
+    private ImageIcon icoPlatformColoneDroite;
 
     private ImageIcon[] icoBombe = new ImageIcon[4];
     private int current_sprite_bomb;
@@ -88,21 +92,26 @@ public class VueControleurGyromite extends JFrame implements Observer {
         //icoBot = chargerIcone("Images/smick.png", 0, 0, 20, 20);//chargerIcone("Images/Pacman.png");
 
         icoVide = chargerIcone("Images/Mur.png");
-        icoColonne = chargerIcone("Images/tileset.png", 16, 9*16, 16, 16);
-        // Icon de colonne du haut et du bas
-        icoColonneHaut = chargerIcone("Images/tileset.png", 0, 9*16, 16, 16);
-        icoColonneBas = chargerIcone("Images/tileset.png", 32, 9*16, 16, 16);
         icoBedrock = chargerIcone("Images/tileset.png", 32, 0, 16, 16);
+
+        // Icon de colonne, colonne haut et du bas et colonne attcher
+        icoColonne = chargerIcone("Images/tileset.png", 16, 3*16, 16, 16);
+        icoColonneHaut = chargerIcone("Images/tileset.png", 0, 3*16, 16, 16);
+        icoColonneBas = chargerIcone("Images/tileset.png", 32, 3*16, 16, 16);
+        icoColonneHautAttacher = chargerIcone("Images/tileset.png", 0, 2*16, 16, 16);
+        icoColonneBasAttacher = chargerIcone("Images/tileset.png", 32, 2*16, 16, 16);
+        // Icon Platform Horizontal et vertical
         icoPlatform = chargerIcone("Images/tileset.png", 0, 0, 16, 16);
         icoPlatformV = chargerIcone("Images/tileset.png", 0, 16, 16, 16);
+        icoPlatformColoneGauche = chargerIcone("Images/tileset.png", 16, 16, 16, 16);
+        icoPlatformColoneDroite = chargerIcone("Images/tileset.png", 32, 16, 16, 16);
+        // Icon corde
         icoCorde = chargerIcone("Images/tileset.png", 16, 0, 16, 16);
-
         /* SpriteSheet de la bombe */
         icoBombe[0] = chargerIcone("Images/bomb_ca.png", 0, 0, 64, 64);
         icoBombe[1] = chargerIcone("Images/bomb_ca.png", 64, 0, 64, 64);
         icoBombe[2] = chargerIcone("Images/bomb_ca.png", 128, 0, 64, 64);
         icoBombe[3] = chargerIcone( "Images/bomb_ca.png", 192, 0, 64, 64);
-
         /* SpriteSheet des smicks */
         icoBot[0] = chargerIcone("Images/smick_ca.png", 0, 0, 32, 32);
         icoBot[1] = chargerIcone("Images/smick_ca.png", 32, 0, 32, 32);
@@ -154,16 +163,24 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     tabJLabel[x][y].setIcon(icoColonne);
                     // Si la case au dessus de x,y different de colonne afficher l'icon du haut de la colonne
                     if (!(jeu.getGrille()[x][y - 1] instanceof Colonne)) {
-                        tabJLabel[x][y].setIcon(icoColonneHaut);
+                        if (jeu.getGrille()[x-1][y] instanceof Platform || jeu.getGrille()[x+1][y] instanceof Platform){
+                            tabJLabel[x][y].setIcon(icoColonneHautAttacher);
+                        }else tabJLabel[x][y].setIcon(icoColonneHaut);
                     // Si la case au dessous de x,y different de colonne afficher l'icon du bas de la colonne
                     } else if (!(jeu.getGrille()[x][y + 1] instanceof Colonne)) {
-                        tabJLabel[x][y].setIcon(icoColonneBas);
+                        if (jeu.getGrille()[x-1][y] instanceof Platform || jeu.getGrille()[x+1][y] instanceof Platform){
+                            tabJLabel[x][y].setIcon(icoColonneBasAttacher);
+                        }else tabJLabel[x][y].setIcon(icoColonneBas);
                     // Sinon afficher l'icon standard de la colonne
                     } else {
                         tabJLabel[x][y].setIcon(icoColonne);
                     }
                 } else if (jeu.getGrille()[x][y] instanceof Platform) {
-                    tabJLabel[x][y].setIcon(icoPlatform);
+                    if ((x-1>0) && (y-1>0) && (y+1<jeu.SIZE_Y) && jeu.getGrille()[x-1][y] instanceof Colonne && (!(jeu.getGrille()[x-1][y+1] instanceof Colonne) || !(jeu.getGrille()[x-1][y-1] instanceof Colonne)))
+                    {tabJLabel[x][y].setIcon(icoPlatformColoneDroite);}
+                    else if ((x+1<jeu.SIZE_X) && (y-1>0) && (y+1 < jeu.SIZE_Y) && jeu.getGrille()[x+1][y] instanceof Colonne && (!(jeu.getGrille()[x+1][y + 1] instanceof Colonne) || !(jeu.getGrille()[x+1][y-1] instanceof Colonne)))
+                    {tabJLabel[x][y].setIcon(icoPlatformColoneGauche);}
+                    else tabJLabel[x][y].setIcon(icoPlatform);
                 } else if (jeu.getGrille()[x][y] instanceof PlatformV) {
                     tabJLabel[x][y].setIcon(icoPlatformV);
                 } else if (jeu.getGrille()[x][y] instanceof Bombe) {

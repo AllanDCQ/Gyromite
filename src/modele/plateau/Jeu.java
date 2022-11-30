@@ -294,7 +294,6 @@ public class Jeu {
 
         grilleEntites[pCible.x][pCible.y] = e;
         map.put(e, pCible);
-
     }
 
 
