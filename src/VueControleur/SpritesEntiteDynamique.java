@@ -7,15 +7,12 @@ import javax.swing.*;
 import java.util.*;
 
 
-public class SpritesEntiteDynamique implements Iterable<ListIterator<ImageIcon>>{
+public class SpritesEntiteDynamique extends SpritesEntite {
 
     public ListIterator<ImageIcon> marche_gauche;
     public ListIterator<ImageIcon> marche_droite;
     public ListIterator<ImageIcon> monter;
     public ListIterator<ImageIcon> tomber;
-    public ListIterator<ImageIcon> attente;
-
-    public Iterable<ImageIcon> mort = new ArrayList<ImageIcon>();
 
     public SpritesEntiteDynamique(ArrayList<ImageIcon> droite,
                                   ArrayList<ImageIcon> gauche,
@@ -28,7 +25,6 @@ public class SpritesEntiteDynamique implements Iterable<ListIterator<ImageIcon>>
         tomber = tombe.listIterator();
         attente = attend.listIterator();
     }
-
 
     public ImageIcon get_sprite(Direction direction) {
         resetIt(direction);
@@ -43,6 +39,8 @@ public class SpritesEntiteDynamique implements Iterable<ListIterator<ImageIcon>>
             return attente.next();
         }
     }
+
+
 
     public void resetIt(Direction d) {
         if(d != null) {
@@ -87,9 +85,6 @@ public class SpritesEntiteDynamique implements Iterable<ListIterator<ImageIcon>>
         }
     }
 
-    @Override
-    public Iterator<ListIterator<ImageIcon>> iterator() {
-        return null;
-    }
+
 }
 
