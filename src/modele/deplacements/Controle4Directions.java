@@ -64,4 +64,6 @@ public class Controle4Directions extends RealisateurDeDeplacement {
     }
 
     public Direction getDirection() {return lastDirection;}
+
+    public Direction getDirectionCourante() {return directionCourante;}
 }

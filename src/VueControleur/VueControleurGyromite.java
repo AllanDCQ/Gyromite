@@ -8,14 +8,11 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import modele.deplacements.Controle4Directions;
 import modele.deplacements.ControleColonne;
@@ -38,10 +35,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private int sizeY;
 
     // icones affichées dans la grille
-    private ImageIcon icoHeroGauche;
-    private ImageIcon icoHeroDroite;
-    private ImageIcon icoHeroCorde;
-    private ImageIcon icoHeroNeutre;
     private ImageIcon icoVide;
     private ImageIcon icoColonne;
     private ImageIcon icoColonneHautAttacher;
@@ -58,8 +51,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon[] icoBombe = new ImageIcon[4];
     private int current_sprite_bomb;
 
-    private ImageIcon[] icoBot = new ImageIcon[4];
-    private int current_sprite_bot;
 
     private JLabel[][] tabJLabel; // cases graphiques (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
 
@@ -67,6 +58,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private JLabel time_label; // Label droite du menu
     private JLabel score_label; // Label gauche du menu
 
+    private ListIterator<SpritesEntiteDynamique> sprite_bot;
+    private SpritesEntiteDynamique sprite_hero;
 
     public VueControleurGyromite(Jeu _jeu) {
         sizeX = _jeu.SIZE_X;
@@ -95,12 +88,29 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
 
     private void chargerLesIcones() {
-        icoHeroGauche = chargerIcone("Images/player_ca_gauche.png", 0, 0, 32, 46);
-        icoHeroDroite = chargerIcone("Images/player_ca_droite.png", 160, 0, 32, 46);
-        icoHeroNeutre = chargerIcone("Images/player_ca_gauche.png", 163, 0, 26, 46);
-        icoHeroCorde = chargerIcone("Images/player_ca_gauche.png", 0, 88, 32, 46);
 
-        //icoBot = chargerIcone("Images/smick.png", 0, 0, 20, 20);//chargerIcone("Images/Pacman.png");
+        /* SpriteSheet du hero smicks */
+        ArrayList<ImageIcon> hero_marche_gauche = new ArrayList<ImageIcon>();
+        hero_marche_gauche.add(chargerIcone("Images/player_ca_gauche.png", 96, 0, 32, 46));
+        hero_marche_gauche.add(chargerIcone("Images/player_ca_gauche.png", 128, 0, 32, 46));
+
+        ArrayList<ImageIcon> hero_marche_droite = new ArrayList<ImageIcon>();
+        hero_marche_droite.add(chargerIcone("Images/player_ca_droite.png", 32, 0, 32, 46));
+        hero_marche_droite.add(chargerIcone("Images/player_ca_droite.png", 64, 0, 32, 46));
+
+        ArrayList<ImageIcon> hero_monter = new ArrayList<ImageIcon>();
+        hero_monter.add(chargerIcone("Images/player_ca_gauche.png", 0, 96, 32, 46));
+        hero_monter.add(chargerIcone("Images/player_ca_gauche.png", 32, 96, 32, 46));
+
+        ArrayList<ImageIcon> hero_tomber = new ArrayList<ImageIcon>();
+        hero_tomber.add(chargerIcone("Images/player_ca_gauche.png", 0, 137, 32, 46));
+
+        ArrayList<ImageIcon> hero_attend = new ArrayList<ImageIcon>();
+        hero_attend.add(chargerIcone("Images/player_ca_droite.png", 0, 0, 32, 46));
+
+        SpritesEntiteDynamique hero = new SpritesEntiteDynamique(hero_marche_droite, hero_marche_gauche, hero_monter, hero_tomber,hero_attend);
+        sprite_hero = hero;
+
 
         icoVide = chargerIcone("Images/Mur.png");
         icoBedrock = chargerIcone("Images/tileset.png", 32, 0, 16, 16);
@@ -123,11 +133,37 @@ public class VueControleurGyromite extends JFrame implements Observer {
         icoBombe[1] = chargerIcone("Images/bomb_ca.png", 64, 0, 64, 64);
         icoBombe[2] = chargerIcone("Images/bomb_ca.png", 128, 0, 64, 64);
         icoBombe[3] = chargerIcone( "Images/bomb_ca.png", 192, 0, 64, 64);
+
         /* SpriteSheet des smicks */
-        icoBot[0] = chargerIcone("Images/smick_ca.png", 0, 0, 32, 32);
-        icoBot[1] = chargerIcone("Images/smick_ca.png", 32, 0, 32, 32);
-        icoBot[2] = chargerIcone("Images/smick_ca.png", 0, 0, 32, 32);
-        icoBot[3] = chargerIcone( "Images/smick_ca.png", 32, 0, 32, 32);
+        ArrayList<SpritesEntiteDynamique> sprites_bot_list = new ArrayList<SpritesEntiteDynamique>();
+        int size_bot = 2;
+        ArrayList<ImageIcon> bot_marche_gauche = new ArrayList<ImageIcon>();
+        bot_marche_gauche.add(chargerIcone("Images/smick_ca.png", 32, 0, 32, 32));
+        bot_marche_gauche.add(chargerIcone("Images/smick_ca.png", 0, 0, 32, 32));
+
+        ArrayList<ImageIcon> bot_marche_droite = new ArrayList<ImageIcon>();
+        bot_marche_droite.add(chargerIcone("Images/smick_ca.png", 32, 34, 32, 32));
+        bot_marche_droite.add(chargerIcone("Images/smick_ca.png", 0, 34, 32, 32));
+
+        ArrayList<ImageIcon> bot_monter = new ArrayList<ImageIcon>();
+        bot_monter.add(chargerIcone("Images/smick_ca.png", 0, 96, 32, 32));
+        bot_monter.add(chargerIcone("Images/smick_ca.png", 32, 96, 32, 32));
+
+        ArrayList<ImageIcon> bot_tomber = new ArrayList<ImageIcon>();
+        bot_tomber.add(chargerIcone("Images/smick_ca.png", 64, 96, 32, 32));
+        bot_tomber.add(chargerIcone("Images/smick_ca.png", 96, 96, 32, 32));
+
+        ArrayList<ImageIcon> bot_attend = new ArrayList<ImageIcon>();
+        bot_attend.add(chargerIcone("Images/smick_ca.png", 0, 64, 32, 32));
+        bot_attend.add(chargerIcone("Images/smick_ca.png", 32, 64, 32, 32));
+
+        for (int j = 0; j < size_bot ; j++) {
+            SpritesEntiteDynamique s = new SpritesEntiteDynamique(bot_marche_droite,bot_marche_gauche, bot_monter, bot_tomber, bot_attend);
+            sprites_bot_list.add(s);
+        }
+        sprite_bot = sprites_bot_list.listIterator();
+
+
     }
 
     private void placerLesComposantsGraphiques() {
@@ -193,8 +229,16 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
+
                 if (jeu.getGrille()[x][y] instanceof Heros) { // si la grille du modèle contient un Pacman, on associe l'icône Pacman du côté de la vue
+                    EntiteDynamique e = jeu.getHector();
                     Direction d = Controle4Directions.getInstance().getDirection();
+
+                    if (e.getAncienne_entite() != null && e.getAncienne_entite().peutPermettreDeMonterDescendre()) d = Direction.haut;
+                    if (e.regarderDansLaDirection(Direction.bas) == null) d = Direction.bas;
+                    if (d == Direction.haut && e.regarderDansLaDirection(Direction.bas).peutServirDeSupport()) d = null;
+                    tabJLabel[x][y].setIcon(sprite_hero.get_sprite(d));
+                    /** J'ai modifié ton code et j'ai utilisé les sprites je te laisse voir si c'est bon pour toi pour supprimer ton code
                     if ((jeu.getGrille()[x][y - 1] instanceof Corde) || (jeu.getGrille()[x][y + 1] instanceof Corde)) tabJLabel[x][y].setIcon(icoHeroCorde);
                     else {
                         if (d == Direction.gauche) tabJLabel[x][y].setIcon(icoHeroGauche);
@@ -203,11 +247,25 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     }
 
                     // si transparence : images avec canal alpha + dessins manuels (voir ci-dessous + créer composant qui redéfinie paint(Graphics g)), se documenter
-                    //BufferedImage bi = getImage("Images/smick.png", 0, 0, 20, 20);
-                    //tabJLabel[x][y].getGraphics().drawImage(bi, 0, 0, null);
+                    BufferedImage bi = getImage("Images/smick.png", 0, 0, 20, 20);
+                    tabJLabel[x][y].getGraphics().drawImage(bi, 0, 0, null); */
 
                 } else if (jeu.getGrille()[x][y] instanceof Bot) {
-                    tabJLabel[x][y].setIcon(next_sprite(current_sprite_bot, Bot.class.getName()));
+                    EntiteDynamique e = (EntiteDynamique) jeu.objetALaPosition(new Point(x,y));
+
+                    Direction d = e.getDirectionCourante();
+                    if (e.getAncienne_entite() != null && e.getAncienne_entite().peutPermettreDeMonterDescendre()) d = Direction.haut;
+
+                    // Si vide en dessous du sprites alors icone tomber
+                    if (e.regarderDansLaDirection(Direction.bas) == null) d = Direction.bas;
+
+                    if (sprite_bot.hasNext() == false) {
+                        while (sprite_bot.hasPrevious()) {
+                            sprite_bot.previous();
+                        }
+                    }
+                    tabJLabel[x][y].setIcon(sprite_bot.next().get_sprite(d));
+
                 } else if (jeu.getGrille()[x][y] instanceof Mur) {
                     tabJLabel[x][y].setIcon(icoBedrock);
                 } else if (jeu.getGrille()[x][y] instanceof Colonne) {
@@ -235,7 +293,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 } else if (jeu.getGrille()[x][y] instanceof PlatformV) {
                     tabJLabel[x][y].setIcon(icoPlatformV);
                 } else if (jeu.getGrille()[x][y] instanceof Bombe) {
-                    tabJLabel[x][y].setIcon(next_sprite(current_sprite_bomb, Bombe.class.getName()));
+                    tabJLabel[x][y].setIcon(next_sprite_Bomb(current_sprite_bomb));
                 } else if (jeu.getGrille()[x][y] instanceof Corde) {
                     tabJLabel[x][y].setIcon(icoCorde);
                 } else {
@@ -293,6 +351,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
         // adapter la taille de l'image a la taille du composant (ici : 20x20)
         return new ImageIcon(bi.getScaledInstance(1200/sizeX, 600/sizeY, java.awt.Image.SCALE_SMOOTH));
     }
+
 
     private BufferedImage getSubImage(String urlIcone, int x, int y, int w, int h) {
         BufferedImage image = null;
@@ -363,10 +422,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
     }
 
 
-    private ImageIcon next_sprite(int current_sprite, String entite ) {
+    private ImageIcon next_sprite_Bomb(int current_sprite) {
         ImageIcon next;
-        int current_time = jeu.GetTimeLeft();
-
 
         switch (current_sprite) {
             case 3 -> current_sprite = 0;
@@ -374,19 +431,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 current_sprite += 1;
             }
         }
-
-        switch (entite) {
-            case "modele.plateau.Bombe" -> {
-                current_sprite_bomb = current_sprite;
-                next = icoBombe[current_sprite_bomb];
-            }
-            case "modele.plateau.Bot" -> {
-                current_sprite_bot = current_sprite;
-                next = icoBot[current_sprite_bot];
-            }
-
-            default -> throw new IllegalStateException("Unexpected value: " + entite);
-        }
+        current_sprite_bomb = current_sprite;
+        next = icoBombe[current_sprite_bomb];
 
         return next;
     }
