@@ -55,6 +55,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     private ListIterator<SpritesEntiteDynamique> sprite_bot;
     private SpritesEntiteDynamique sprite_hero;
+    private ListIterator<SpritesBomb> sprite_bomb;
 
     public VueControleurGyromite(Jeu _jeu) {
         sizeX = _jeu.SIZE_X;
@@ -94,8 +95,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
         hero_marche_droite.add(chargerIcone("Images/player_ca_droite.png", 64, 0, 32, 46));
 
         ArrayList<ImageIcon> hero_monter = new ArrayList<ImageIcon>();
-        hero_monter.add(chargerIcone("Images/player_ca_gauche.png", 0, 96, 32, 46));
-        hero_monter.add(chargerIcone("Images/player_ca_gauche.png", 32, 96, 32, 46));
+        hero_monter.add(chargerIcone("Images/player_ca_gauche.png", 0, 88, 32, 46));
+        hero_monter.add(chargerIcone("Images/player_ca_gauche.png", 32, 88, 32, 46));
 
         ArrayList<ImageIcon> hero_tomber = new ArrayList<ImageIcon>();
         hero_tomber.add(chargerIcone("Images/player_ca_gauche.png", 0, 137, 32, 46));
@@ -123,11 +124,26 @@ public class VueControleurGyromite extends JFrame implements Observer {
         icoPlatformColoneDroite = chargerIcone("Images/tileset.png", 32, 16, 16, 16);
         // Icon corde
         icoCorde = chargerIcone("Images/tileset.png", 16, 0, 16, 16);
+
         /* SpriteSheet de la bombe */
-        icoBombe[0] = chargerIcone("Images/bomb_ca.png", 0, 0, 64, 64);
-        icoBombe[1] = chargerIcone("Images/bomb_ca.png", 64, 0, 64, 64);
-        icoBombe[2] = chargerIcone("Images/bomb_ca.png", 128, 0, 64, 64);
-        icoBombe[3] = chargerIcone( "Images/bomb_ca.png", 192, 0, 64, 64);
+        ArrayList<SpritesBomb> sprites_bomb_list = new ArrayList<SpritesBomb>();
+        int size_bomb = 7;
+        ArrayList<ImageIcon> bomb_attente = new ArrayList<ImageIcon>();
+        bomb_attente.add(chargerIcone("Images/bomb_ca.png", 8, 0, 48, 48));
+        bomb_attente.add(chargerIcone("Images/bomb_ca.png", 72, 0, 48, 48));
+        bomb_attente.add(chargerIcone("Images/bomb_ca.png", 136, 0, 48, 48));
+        bomb_attente.add(chargerIcone( "Images/bomb_ca.png", 200, 0, 48, 48));
+
+        ArrayList<ImageIcon> bomb_explose = new ArrayList<ImageIcon>();
+        bomb_explose.add(chargerIcone("Images/bomb_ca.png", 8, 64, 48, 48));
+        bomb_explose.add(chargerIcone("Images/bomb_ca.png", 72, 64, 48, 48));
+        bomb_explose.add(chargerIcone("Images/bomb_ca.png", 136, 64, 48, 48));
+        bomb_explose.add(chargerIcone( "Images/bomb_ca.png", 200, 64, 48, 48));
+        for (int i = 0; i < size_bomb ; i++) {
+            SpritesBomb b = new SpritesBomb(bomb_attente,bomb_explose);
+            sprites_bomb_list.add(b);
+        }
+        sprite_bomb = sprites_bomb_list.listIterator();
 
         /* SpriteSheet des smicks */
         ArrayList<SpritesEntiteDynamique> sprites_bot_list = new ArrayList<SpritesEntiteDynamique>();
@@ -194,9 +210,14 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     EntiteDynamique e = jeu.getHector();
                     Direction d = Controle4Directions.getInstance().getDirection();
 
+                    if (d == Direction.haut || d == Direction.bas) {
+                        Entite entite = e.regarderDansLaDirection(Direction.bas);
+                        if (entite != null && entite.peutServirDeSupport()) {
+                            d = null;
+                        }
+                    }
                     if (e.getAncienne_entite() != null && e.getAncienne_entite().peutPermettreDeMonterDescendre()) d = Direction.haut;
                     if (e.regarderDansLaDirection(Direction.bas) == null) d = Direction.bas;
-                    if (d == Direction.haut && e.regarderDansLaDirection(Direction.bas).peutServirDeSupport()) d = null;
                     tabJLabel[x][y].setIcon(sprite_hero.get_sprite(d));
                     /** J'ai modifié ton code et j'ai utilisé les sprites je te laisse voir si c'est bon pour toi pour supprimer ton code
                     if ((jeu.getGrille()[x][y - 1] instanceof Corde) || (jeu.getGrille()[x][y + 1] instanceof Corde)) tabJLabel[x][y].setIcon(icoHeroCorde);
@@ -253,7 +274,13 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 } else if (jeu.getGrille()[x][y] instanceof PlatformV) {
                     tabJLabel[x][y].setIcon(icoPlatformV);
                 } else if (jeu.getGrille()[x][y] instanceof Bombe) {
-                    tabJLabel[x][y].setIcon(next_sprite_Bomb(current_sprite_bomb));
+                    // get_sprite() : par défaut attente
+                    if (sprite_bomb.hasNext() == false) {
+                        while (sprite_bomb.hasPrevious()) {
+                            sprite_bomb.previous();
+                        }
+                    }
+                    tabJLabel[x][y].setIcon(sprite_bomb.next().get_sprite());
                 } else if (jeu.getGrille()[x][y] instanceof Corde) {
                     tabJLabel[x][y].setIcon(icoCorde);
                 } else {
