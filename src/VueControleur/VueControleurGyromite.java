@@ -1,6 +1,8 @@
 package VueControleur;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -28,6 +30,9 @@ import modele.plateau.*;
  */
 public class VueControleurGyromite extends JFrame implements Observer {
     private Jeu jeu; // référence sur une classe de modèle : permet d'accéder aux données du modèle pour le rafraichissement, permet de communiquer les actions clavier (ou souris)
+
+    private JFrame menuPrincipal;
+    private JPanel menu;
 
     private int sizeX; // taille de la grille affichée
     private int sizeY;
@@ -130,9 +135,42 @@ public class VueControleurGyromite extends JFrame implements Observer {
         setSize(1200, 600+60);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
 
+        menuPrincipal = new JFrame();
+        menuPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer
+        menuPrincipal.setTitle("Menu");
+        menuPrincipal.setSize(900, 600);
+
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new GridLayout(2, 2));
+
+        JButton levelOneButton = new JButton("1");
+        levelOneButton.setBackground(Color.RED);
+        levelOneButton.setForeground(Color.BLACK);
+        levelOneButton.setFocusable(false);
+        levelOneButton.setBorder(BorderFactory.createEtchedBorder());
+        levelOneButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                menuPrincipal.setVisible(true);
+                menuPrincipal.dispose();
+                setVisible(true);
+            }
+        });
+
+        menuPanel.add(levelOneButton);
+        
+
+        JButton levelTwoButton = new JButton("2");
+        menuPanel.add(levelTwoButton);
+        
+        JButton levelThreeButton = new JButton("3");
+        menuPanel.add(levelThreeButton);
+
+        JButton levelFourButton = new JButton("4");
+        menuPanel.add(levelFourButton);
+
         /* Initialization and Add father Panel (father layout) */
         JPanel centralPanel = new JPanel();
-        add(centralPanel);
         centralPanel.setLayout(new BorderLayout());
 
         /* Initialization of son layouts */
@@ -142,7 +180,9 @@ public class VueControleurGyromite extends JFrame implements Observer {
         /* Add son layouts to the father layout */
         centralPanel.add(barMenu, BorderLayout.NORTH);
         centralPanel.add(grilleJLabels, BorderLayout.CENTER);
-
+        add(centralPanel);
+        
+        menuPrincipal.add(menuPanel);
     }
 
 
@@ -349,6 +389,10 @@ public class VueControleurGyromite extends JFrame implements Observer {
         }
 
         return next;
+    }
+
+    public void setMenuVisible(boolean visible) {
+        menuPrincipal.setVisible(visible);
     }
 
 }

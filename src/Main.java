@@ -17,7 +17,7 @@ public class Main {
 
         jeu.getOrdonnanceur().addObserver(vc);
         
-        vc.setVisible(true);
+        vc.setMenuVisible(true);
         jeu.start(200);
     }
 }
