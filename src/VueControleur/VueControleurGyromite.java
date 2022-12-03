@@ -408,14 +408,14 @@ public class VueControleurGyromite extends JFrame implements Observer {
         score_label = new JLabel(String.valueOf(jeu.GetScore()));
         score_label.setForeground(Color.white);
         score_label.setFont(new Font(Font.MONOSPACED, score_label.getFont().getStyle(), 22));
-        score_label.setBorder(BorderFactory.createEmptyBorder(0, 220, 0, 0));
+        score_label.setBorder(BorderFactory.createEmptyBorder(0, 300, 0, 0));
         menu_label.add(score_label, BorderLayout.CENTER);
 
         /* Initialize the Time label */
         time_label = new JLabel(String.valueOf(jeu.GetTimeLeft()));
         time_label.setFont(new Font(Font.MONOSPACED, score_label.getFont().getStyle(), 22));
         time_label.setForeground(Color.green);
-        time_label.setBorder(BorderFactory.createEmptyBorder(2, 210, 0, 0));
+        time_label.setBorder(BorderFactory.createEmptyBorder(2, 300, 0, 0));
         menu_label.add(time_label);
 
         return menu_label;
