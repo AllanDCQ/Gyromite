@@ -1,7 +1,6 @@
 package VueControleur;
 
 import modele.deplacements.Direction;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.*;

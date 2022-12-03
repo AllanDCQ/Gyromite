@@ -15,9 +15,8 @@ import modele.plateau.Colonne;
  */
 public class ControleColonne extends RealisateurDeDeplacement {
 
-    private Direction directionCourante = null;
+    private Direction directionCourante = Direction.haut;
     private static ControleColonne c3d;
-    private boolean estEnHaut = true;
     private ArrayList<EntiteDynamique> lstEntitesDynamiquesInverse = new ArrayList<EntiteDynamique>();
 
     public static ControleColonne getInstance() {
@@ -27,14 +26,32 @@ public class ControleColonne extends RealisateurDeDeplacement {
         return c3d;
     }
 
+    public static ControleColonne reset(){
+        c3d = new ControleColonne();
+        return c3d;
+    }
+
     public void setDirectionCourante() {
-        directionCourante = estEnHaut ? Direction.bas : Direction.haut;
+        switch(directionCourante){
+            case gauche:
+            case droite:
+                break;
+            case bas:
+                directionCourante = Direction.haut;
+                break;
+            case haut:
+                directionCourante = Direction.bas;
+                break;
+        }
+        for (EntiteDynamique e : lstEntitesDynamiques){
+            ((Colonne)e).restant = ((Colonne)e).taille - ((Colonne)e).restant;
+        }
     }
 
     protected boolean realiserDeplacement() { 
         boolean ret = false;
-        
-        for (EntiteDynamique e : estEnHaut ? lstEntitesDynamiquesInverse : lstEntitesDynamiques) {
+
+        for (EntiteDynamique e : directionCourante == Direction.haut ? lstEntitesDynamiquesInverse : lstEntitesDynamiques) {
             if (directionCourante != null){
                 Entite eSurChemin = e.regarderDansLaDirection(directionCourante);
                 switch (directionCourante) {
@@ -45,30 +62,27 @@ public class ControleColonne extends RealisateurDeDeplacement {
 
                     case haut:
                         // repeter N fois avec N la taille de la colonne a laquelle cette entite apartient
-                        for (int i = 0; i < ((Colonne)e).taille; i++){
-                            if (!estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
-                                // la colonne et EN BAS, et lentite apres et null ou ecrasable
-                                if (e.avancerDirectionChoisie(Direction.haut)){
-                                    ret = true;
-                                }
+                        if (((Colonne)e).restant > 0){
+                            // la colonne et EN BAS, et lentite apres et null ou ecrasable
+                            if (e.avancerDirectionChoisie(Direction.haut)){
+                                ret = true;
+                                ((Colonne)e).restant -= 1;
                             }
                         }
                         break;
                     case bas:
                         // repeter N fois avec N la taille de la colonne a laquelle cette entite apartient
-                        for (int i = 0; i < ((Colonne)e).taille; i++){
-                            if (estEnHaut && (eSurChemin == null || eSurChemin.peutEtreEcrase())) {
-                                // la colonne et EN HAUT, et lentite apres et null ou ecrasable
-                                if (e.avancerDirectionChoisie(Direction.bas)){
-                                    ret = true;
-                                }
+                        if (((Colonne)e).restant > 0){
+                            // la colonne et EN HAUT, et lentite apres et null ou ecrasable
+                            if (e.avancerDirectionChoisie(Direction.bas)){
+                                ret = true;
+                                ((Colonne)e).restant -= 1;
                             }
                         }
-                        break;
+                    break;
                 }
             }
         }
-        if (ret) estEnHaut = !estEnHaut;
         return ret;
     }
 
@@ -77,6 +91,7 @@ public class ControleColonne extends RealisateurDeDeplacement {
     // [ nouvelleEntite , ...] [ ... , nouvelleEntite ]
     public void addEntiteDynamique(EntiteDynamique ed) {
         lstEntitesDynamiques.add(ed);
+        lstEntitesDynamiquesInverse.clear();
         lstEntitesDynamiquesInverse.addAll(lstEntitesDynamiques);
         // Stocker linverse de la liste des colone pour bouger les colone de bas en haut dans lordre inverse que de haut en bas
         Collections.reverse(lstEntitesDynamiquesInverse);

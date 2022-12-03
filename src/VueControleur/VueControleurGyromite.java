@@ -3,6 +3,8 @@ package VueControleur;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -29,7 +31,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private Jeu jeu; // référence sur une classe de modèle : permet d'accéder aux données du modèle pour le rafraichissement, permet de communiquer les actions clavier (ou souris)
 
     private JFrame menuPrincipal;
-    private JPanel menu;
 
     private int sizeX; // taille de la grille affichée
     private int sizeY;
@@ -47,6 +48,11 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon icoPlatformV;
     private ImageIcon icoPlatformColoneGauche;
     private ImageIcon icoPlatformColoneDroite;
+    private ImageIcon icoLevel1;
+    private ImageIcon icoLevel2;
+    private ImageIcon icoLevel3;
+    private ImageIcon icoLevel4;
+
 
     private ImageIcon[] icoBombe = new ImageIcon[4];
     private int current_sprite_bomb;
@@ -129,6 +135,21 @@ public class VueControleurGyromite extends JFrame implements Observer {
         icoPlatformColoneDroite = chargerIcone("Images/tileset.png", 32, 16, 16, 16);
         // Icon corde
         icoCorde = chargerIcone("Images/tileset.png", 16, 0, 16, 16);
+        
+        // Icon Level 1
+        try {
+            icoLevel1 = new ImageIcon(ImageIO.read(new File("Images/Level1.png")));
+            icoLevel2 = new ImageIcon(ImageIO.read(new File("Images/Level2.png")));
+            icoLevel3 = new ImageIcon(ImageIO.read(new File("Images/Level3.png")));
+            icoLevel4 = new ImageIcon(ImageIO.read(new File("Images/Level4.png")));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        //Image img = icoLevel1.getImage();  
+        //Image newimg = img.getScaledInstance(450, 300, java.awt.Image.SCALE_SMOOTH);
+        //icoLevel1 = new ImageIcon(newimg);
 
         /* SpriteSheet de la bombe */
         ArrayList<SpritesBomb> sprites_bomb_list = new ArrayList<SpritesBomb>();
@@ -195,41 +216,17 @@ public class VueControleurGyromite extends JFrame implements Observer {
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new GridLayout(2, 2));
 
-        JButton levelOneButton = new JButton("1");
-        levelOneButton.setBackground(Color.RED);
-        levelOneButton.setForeground(Color.BLACK);
-        levelOneButton.setFocusable(false);
-        levelOneButton.setBorder(BorderFactory.createEtchedBorder());
-        levelOneButton.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                menuPrincipal.setVisible(true);
-                menuPrincipal.dispose();
-                setVisible(true);
-            }
-        });
+        addButtons(menuPanel);
 
-        menuPanel.add(levelOneButton);
-        
-
-        JButton levelTwoButton = new JButton("2");
-        menuPanel.add(levelTwoButton);
-        
-        JButton levelThreeButton = new JButton("3");
-        menuPanel.add(levelThreeButton);
-
-        JButton levelFourButton = new JButton("4");
-        menuPanel.add(levelFourButton);
-
-        /* Initialization and Add father Panel (father layout) */
+        /* CentralPanel of the game */
         JPanel centralPanel = new JPanel();
         centralPanel.setLayout(new BorderLayout());
 
-        /* Initialization of son layouts */
+        /* BarMenu (Score + Time) and GameGrid (Hero + smicks + ...) */
         JComponent barMenu = component_barMenu();
         JComponent grilleJLabels = component_gameBoard(); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
 
-        /* Add son layouts to the father layout */
+        /* Add the BarMenu and the GameGrid to the centralPanel */
         centralPanel.add(barMenu, BorderLayout.NORTH);
         centralPanel.add(grilleJLabels, BorderLayout.CENTER);
         add(centralPanel);
@@ -259,17 +256,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     if (e.getAncienne_entite() != null && e.getAncienne_entite().peutPermettreDeMonterDescendre()) d = Direction.haut;
                     if (e.regarderDansLaDirection(Direction.bas) == null) d = Direction.bas;
                     tabJLabel[x][y].setIcon(sprite_hero.get_sprite(d));
-                    /** J'ai modifié ton code et j'ai utilisé les sprites je te laisse voir si c'est bon pour toi pour supprimer ton code
-                    if ((jeu.getGrille()[x][y - 1] instanceof Corde) || (jeu.getGrille()[x][y + 1] instanceof Corde)) tabJLabel[x][y].setIcon(icoHeroCorde);
-                    else {
-                        if (d == Direction.gauche) tabJLabel[x][y].setIcon(icoHeroGauche);
-                        else if (d == Direction.droite) tabJLabel[x][y].setIcon(icoHeroDroite);
-                        else tabJLabel[x][y].setIcon(icoHeroNeutre);
-                    }
-
-                    // si transparence : images avec canal alpha + dessins manuels (voir ci-dessous + créer composant qui redéfinie paint(Graphics g)), se documenter
-                    BufferedImage bi = getImage("Images/smick.png", 0, 0, 20, 20);
-                    tabJLabel[x][y].getGraphics().drawImage(bi, 0, 0, null); */
 
                 } else if (jeu.getGrille()[x][y] instanceof Bot) {
                     EntiteDynamique e = (EntiteDynamique) jeu.objetALaPosition(new Point(x,y));
@@ -292,12 +278,12 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 } else if (jeu.getGrille()[x][y] instanceof Colonne) {
                     tabJLabel[x][y].setIcon(icoColonne);
                     // Si la case au dessus de x,y different de colonne afficher l'icon du haut de la colonne
-                    if (!(jeu.getGrille()[x][y - 1] instanceof Colonne)) {
-                        if (jeu.getGrille()[x-1][y] instanceof Platform || jeu.getGrille()[x+1][y] instanceof Platform){
+                    if ((y-1>=0) && !(jeu.getGrille()[x][y - 1] instanceof Colonne)) {
+                        if ((x-1>0) && jeu.getGrille()[x-1][y] instanceof Platform || jeu.getGrille()[x+1][y] instanceof Platform){
                             tabJLabel[x][y].setIcon(icoColonneHautAttacher);
                         }else tabJLabel[x][y].setIcon(icoColonneHaut);
                         // Si la case au dessous de x,y different de colonne afficher l'icon du bas de la colonne
-                    } else if (!(jeu.getGrille()[x][y + 1] instanceof Colonne)) {
+                    } else if ((y+1<jeu.SIZE_Y) && !(jeu.getGrille()[x][y + 1] instanceof Colonne)) {
                         if (jeu.getGrille()[x-1][y] instanceof Platform || jeu.getGrille()[x+1][y] instanceof Platform){
                             tabJLabel[x][y].setIcon(icoColonneBasAttacher);
                         }else tabJLabel[x][y].setIcon(icoColonneBas);
@@ -345,13 +331,24 @@ public class VueControleurGyromite extends JFrame implements Observer {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                /* Increase time */
-                jeu.increase_TimeLeft();
 
-                /* Initialization and Add father Panel (father layout) */
-                mettreAJourAffichageJeu();
-                mettreAJourAffichageMenu();
+                if(jeu.checkEnd()){
+                    System.out.println("Game End");
+                    menuPrincipal.setVisible(true);
+                    setVisible(false);
+                    jeu.reset();
+                }
+                else {
+                    if (jeu.isOn){
+                        /* Increase time */
+                        jeu.increase_TimeLeft();
 
+                        /* Initialization and Add father Panel (father layout) */
+                        mettreAJourAffichageJeu();
+                        mettreAJourAffichageMenu();
+
+                    }
+                }
             }
         });
     }
@@ -392,8 +389,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
         BufferedImage bi = image.getSubimage(x, y, w, h);
         return bi;
     }
-
-
 
 
     /**
@@ -466,6 +461,107 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
     public void setMenuVisible(boolean visible) {
         menuPrincipal.setVisible(visible);
+    }
+
+    private void addButtons(JPanel panel){
+
+                // Level 1 Button
+                JButton levelOneButton = new JButton(icoLevel1);
+                levelOneButton.setBackground(Color.BLACK);
+                levelOneButton.setFocusable(false);
+                levelOneButton.setBorder(BorderFactory.createEtchedBorder());
+                levelOneButton.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        menuPrincipal.setVisible(false);
+                        jeu.loadLevel("Levels/00.csv");
+                        setVisible(true);
+                    }
+                });
+
+                levelOneButton.addMouseListener(new MouseAdapter(){
+                    public void mouseEntered(MouseEvent e){
+                        levelOneButton.setBackground(Color.RED);
+                    }
+                    public void mouseExited(MouseEvent e){
+                        levelOneButton.setBackground(Color.BLACK);
+                    }
+                });
+                panel.add(levelOneButton);
+                
+                // Level 2 Button
+                JButton levelTwoButton = new JButton(icoLevel2);
+                levelTwoButton.setBackground(Color.BLACK);
+                levelTwoButton.setFocusable(false);
+                levelTwoButton.setBorder(BorderFactory.createEtchedBorder());
+                levelTwoButton.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        menuPrincipal.setVisible(false);
+                        jeu.loadLevel("Levels/01.csv");
+                        setVisible(true);
+                    }
+                });
+
+                levelTwoButton.addMouseListener(new MouseAdapter(){
+                    public void mouseEntered(MouseEvent e){
+                        levelTwoButton.setBackground(Color.RED);
+                    }
+                    public void mouseExited(MouseEvent e){
+                        levelTwoButton.setBackground(Color.BLACK);
+                    }
+                });
+                panel.add(levelTwoButton);
+                
+                // Level 3 Button
+                JButton levelThreeButton = new JButton(icoLevel3);
+                levelThreeButton.setBackground(Color.BLACK);
+                levelThreeButton.setForeground(Color.BLACK);
+                levelThreeButton.setFocusable(false);
+                levelThreeButton.setBorder(BorderFactory.createEtchedBorder());
+                levelThreeButton.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        menuPrincipal.setVisible(false);
+                        jeu.loadLevel("Levels/02.csv");
+                        setVisible(true);
+                    }
+                });
+
+                levelThreeButton.addMouseListener(new MouseAdapter(){
+                    public void mouseEntered(MouseEvent e){
+                        levelThreeButton.setBackground(Color.RED);
+                    }
+                    public void mouseExited(MouseEvent e){
+                        levelThreeButton.setBackground(Color.BLACK);
+                    }
+                });
+                panel.add(levelThreeButton);
+        
+                // Level 3 Button
+                JButton levelFourButton = new JButton(icoLevel4);
+                levelFourButton.setBackground(Color.BLACK);
+                levelFourButton.setForeground(Color.BLACK);
+                levelFourButton.setFocusable(false);
+                levelFourButton.setBorder(BorderFactory.createEtchedBorder());
+                levelFourButton.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        menuPrincipal.setVisible(false);
+                        jeu.loadLevel("Levels/03.csv");
+                        setVisible(true);
+                    }
+                });
+
+                levelFourButton.addMouseListener(new MouseAdapter(){
+                    public void mouseEntered(MouseEvent e){
+                        levelFourButton.setBackground(Color.RED);
+                    }
+                    public void mouseExited(MouseEvent e){
+                        levelFourButton.setBackground(Color.BLACK);
+                    }
+                });
+                panel.add(levelFourButton);
     }
 
 }

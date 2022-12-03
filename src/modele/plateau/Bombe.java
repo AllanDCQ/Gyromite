@@ -18,7 +18,6 @@ public class Bombe extends EntiteDynamique{
 
     public boolean ecrase(Entite e ) {
         if (e == jeu.getHector()){
-            System.out.println("Bombe recolte");
             jeu.ecraseEntite(this);
             jeu.increase_Score();
             return true;

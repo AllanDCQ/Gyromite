@@ -22,6 +22,10 @@ public class Ordonnanceur extends Observable implements Runnable {
         new Thread(this).start();
     }
 
+    public void reset(){
+        lstDeplacements.clear();
+    }
+
     @Override
     public void run() {
         boolean update = false;

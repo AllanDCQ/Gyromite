@@ -13,6 +13,11 @@ public class Gravite extends RealisateurDeDeplacement {
         return g;
     }
 
+    public static Gravite reset(){
+        g = new Gravite();
+        return g;
+    }
+
     public boolean realiserDeplacement() {
         boolean ret = false;
 

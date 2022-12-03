@@ -20,6 +20,11 @@ public class IA extends RealisateurDeDeplacement {
         return iad;
     }
 
+    public static IA reset(){
+        iad = new IA();
+        return iad;
+    }
+
     protected boolean realiserDeplacement() {
 
         boolean ret = true;

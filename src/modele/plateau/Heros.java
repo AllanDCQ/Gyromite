@@ -26,6 +26,7 @@ public class Heros extends EntiteDynamique {
         jeu.ecraseEntite(this);
         Controle4Directions.getInstance().removeEntiteDynamique(this);
         Gravite.getInstance().removeEntiteDynamique(this);
+        jeu.heroDead = true;
         return true;
     }
 

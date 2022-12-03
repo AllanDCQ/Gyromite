@@ -16,13 +16,9 @@ import javax.swing.*;
 import java.awt.Point;
 import java.util.HashMap;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /** Actuellement, cette classe gère les postions
  * (ajouter conditions de victoire, chargement du plateau, etc.)
@@ -36,7 +32,9 @@ public class Jeu {
     private HashMap<Entite, Integer> cmptDeplH = new HashMap<Entite, Integer>();
     private HashMap<Entite, Integer> cmptDeplV = new HashMap<Entite, Integer>();
 
+    public boolean isOn = false; 
     private Heros hector;
+    public boolean heroDead = false;
     private ArrayList<Bot> smicks = new ArrayList<Bot>();
 
     protected HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
@@ -58,7 +56,7 @@ public class Jeu {
 
 
     public Jeu() {
-        initialisationDesEntites();
+        //initialisationDesEntites();
         TimeLeft = 1000;
         Score = 0;
 
@@ -81,17 +79,17 @@ public class Jeu {
         return grilleEntites;
     }
 
-
-    public Heros getHector() {
-        return hector;
+    private void resetGrille(){
+        for (int index = 0; index < SIZE_X; index++) {
+            for (int inner = 0; inner < SIZE_Y; inner++) {
+                grilleEntites[index][inner] = null;
+            }
+        }
     }
 
 
-    private void initialisationDesEntites() {
-
-        // Fonction pour load un niveau à partir d'un fichier text
-        loadLevel("Levels/03.csv");
-
+    public Heros getHector() {
+        return hector;
     }
 
 
@@ -159,7 +157,6 @@ public class Jeu {
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase()){
-                                System.out.println("Haut bas ecrase");
                                 ((EntiteDynamique) next_entite).ecrase(e);
                                 retour = true;
                             }
@@ -221,8 +218,14 @@ public class Jeu {
                     else {
                         /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                         if (next_entite.peutEtreEcrase()) {
-                            ((EntiteDynamique) next_entite).ecrase(e); //Pas une colonne
-                            retour = true;
+                            if ( objetALaPosition(calculerPointCibleDistance(pCourant, d, e.taille)) == null && d == Direction.haut ){
+                                deplacerEntite(map.get(next_entite), calculerPointCibleDistance(pCourant, d, e.taille), (EntiteDynamique)next_entite);
+                                retour = true;
+                            }
+                            else {
+                                ((EntiteDynamique) next_entite).ecrase(e); //Pas une colonne
+                                retour = true;
+                            }
                         }
 
                     }
@@ -360,6 +363,36 @@ public class Jeu {
         }
     }
 
+    public boolean checkEnd(){
+
+        // TODO
+        if (heroDead){
+            return true;
+        }
+        if (GetScore() == 600){
+            return true;
+        }
+        return false;
+    }
+
+
+    // reset all the game
+    public void reset(){    
+        System.out.println("Reset Game");
+        resetGrille();
+        smicks.clear();
+        map.clear();
+        Controle4Directions.reset();
+        ControleColonne.reset();
+        Gravite.reset();
+        IA.reset();
+        ordonnanceur.reset();
+        Score = 0;
+        heroDead = false;
+        isOn = false;
+        TimeLeft = 1000;
+    }
+
 
     public void loadLevel(String fileName){
 
@@ -414,6 +447,7 @@ public class Jeu {
                 // read next line
                 line = reader.readLine();
             }
+            isOn = true;
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();

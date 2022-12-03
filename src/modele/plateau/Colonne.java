@@ -4,11 +4,13 @@ import modele.deplacements.Direction;
 public class Colonne extends EntiteDynamique {
     public Colonne(Jeu _jeu, int _taille) { 
         super(_jeu); 
-        this.taille = _taille;
+        taille = _taille;
+        restant = 0;
         speed = 1;
     }
 
     public int taille;
+    public int restant;
 
     public boolean peutEtreEcrase() { return false; }
     public boolean peutServirDeSupport() { return true; }
