@@ -54,6 +54,8 @@ public class Jeu {
     /* Hero's score */
     private int Score;
 
+    public int level = 1;
+
 
     public Jeu() {
         //initialisationDesEntites();

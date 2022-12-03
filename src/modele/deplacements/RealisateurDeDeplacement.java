@@ -10,7 +10,6 @@ Tous les déplacement sont déclenchés par cette classe (gravité, controle cla
 public abstract class RealisateurDeDeplacement {
     protected ArrayList<EntiteDynamique> lstEntitesDynamiques = new ArrayList<EntiteDynamique>();
     protected abstract boolean realiserDeplacement();
-
     public void addEntiteDynamique(EntiteDynamique ed) {lstEntitesDynamiques.add(ed);};
     public void removeEntiteDynamique(EntiteDynamique ed) {lstEntitesDynamiques.remove(ed);};
 

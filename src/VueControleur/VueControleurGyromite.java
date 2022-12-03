@@ -8,7 +8,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -321,7 +324,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
      */
     private void mettreAJourAffichageMenu() {
         time_label.setText(String.valueOf(jeu.GetTimeLeft()));
-        score_label.setText(String.valueOf(jeu.GetScore()));
+        score_label.setText(String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore());
     }
 
     @Override
@@ -405,10 +408,12 @@ public class VueControleurGyromite extends JFrame implements Observer {
         menu_label.setLayout(new GridLayout());
 
         /* Initialize the Score label */
-        score_label = new JLabel(String.valueOf(jeu.GetScore()));
+        String Score_And_HScore = String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore();
+        score_label = new JLabel(Score_And_HScore);
+
         score_label.setForeground(Color.white);
         score_label.setFont(new Font(Font.MONOSPACED, score_label.getFont().getStyle(), 22));
-        score_label.setBorder(BorderFactory.createEmptyBorder(0, 300, 0, 0));
+        score_label.setBorder(BorderFactory.createEmptyBorder(0, 290, 0, 0));
         menu_label.add(score_label, BorderLayout.CENTER);
 
         /* Initialize the Time label */
@@ -474,7 +479,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     @Override
                     public void actionPerformed(ActionEvent e){
                         menuPrincipal.setVisible(false);
-                        jeu.loadLevel("Levels/00.csv");
+                        jeu.loadLevel("Levels/01.csv");
+                        jeu.level = 1;
                         setVisible(true);
                     }
                 });
@@ -498,7 +504,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     @Override
                     public void actionPerformed(ActionEvent e){
                         menuPrincipal.setVisible(false);
-                        jeu.loadLevel("Levels/01.csv");
+                        jeu.loadLevel("Levels/02.csv");
+                        jeu.level = 2;
                         setVisible(true);
                     }
                 });
@@ -523,7 +530,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     @Override
                     public void actionPerformed(ActionEvent e){
                         menuPrincipal.setVisible(false);
-                        jeu.loadLevel("Levels/02.csv");
+                        jeu.loadLevel("Levels/03.csv");
+                        jeu.level = 3;
                         setVisible(true);
                     }
                 });
@@ -548,7 +556,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     @Override
                     public void actionPerformed(ActionEvent e){
                         menuPrincipal.setVisible(false);
-                        jeu.loadLevel("Levels/03.csv");
+                        jeu.loadLevel("Levels/04.csv");
+                        jeu.level = 4;
                         setVisible(true);
                     }
                 });
@@ -562,6 +571,21 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     }
                 });
                 panel.add(levelFourButton);
+    }
+
+    private String getHighScore(){
+        String score = "0";
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader("data/scores/score" + String.valueOf(jeu.level) + ".txt"));
+            score = reader.readLine();
+            reader.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return score;
     }
 
 }
