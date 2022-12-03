@@ -16,7 +16,9 @@ import javax.swing.*;
 import java.awt.Point;
 import java.util.HashMap;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -372,6 +374,18 @@ public class Jeu {
             return true;
         }
         if (GetScore() == 600){
+            if (Integer.valueOf(getHighScore()) < GetTimeLeft()){
+                File scoreFile = new File("data/scores/score" + String.valueOf(level) + ".txt");
+                FileWriter scoreWriter;
+                try {
+                    scoreWriter = new FileWriter(scoreFile, false);
+                    scoreWriter.write(String.valueOf(GetTimeLeft()));
+                    scoreWriter.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
             return true;
         }
         return false;
@@ -455,6 +469,21 @@ public class Jeu {
             e.printStackTrace();
         }
 
+    }
+
+    private String getHighScore(){
+        String score = "0";
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader("data/scores/score" + String.valueOf(level) + ".txt"));
+            score = reader.readLine();
+            reader.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return score;
     }
 
 }
