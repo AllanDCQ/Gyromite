@@ -227,7 +227,7 @@ public class Jeu {
                                 retour = true;
                             }
                             else {
-                                ((EntiteDynamique) next_entite).ecrase(e); //Pas une colonne
+                                ((EntiteDynamique) next_entite).ecrase(e);
                                 retour = true;
                             }
                         }
@@ -457,7 +457,9 @@ public class Jeu {
                         Colonne tmp_colonne = new Colonne(this, Integer.parseInt(line_info[3]));
                         addEntite(tmp_colonne, Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         ControleColonne.getInstance().addEntiteDynamique(tmp_colonne);
-                        ordonnanceur.add(ControleColonne.getInstance());
+                        //if (!ordonnanceur.contains(ControleColonne.getInstance())){
+                            ordonnanceur.add(ControleColonne.getInstance());
+                        //}
                         break;
                 }
                 // read next line

@@ -53,7 +53,6 @@ public class ControleColonne extends RealisateurDeDeplacement {
 
         for (EntiteDynamique e : directionCourante == Direction.haut ? lstEntitesDynamiquesInverse : lstEntitesDynamiques) {
             if (directionCourante != null){
-                Entite eSurChemin = e.regarderDansLaDirection(directionCourante);
                 switch (directionCourante) {
                     case gauche:
                     case droite:

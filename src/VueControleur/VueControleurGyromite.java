@@ -34,6 +34,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private Jeu jeu; // référence sur une classe de modèle : permet d'accéder aux données du modèle pour le rafraichissement, permet de communiquer les actions clavier (ou souris)
 
     private JFrame menuPrincipal;
+    private JLabel levelOneScore;
+    private JLabel levelTwoScore;
 
     private int sizeX; // taille de la grille affichée
     private int sizeY;
@@ -214,12 +216,14 @@ public class VueControleurGyromite extends JFrame implements Observer {
         menuPrincipal = new JFrame();
         menuPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer
         menuPrincipal.setTitle("Menu");
-        menuPrincipal.setSize(900, 600);
+        menuPrincipal.setSize(1200, 860);
 
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new GridLayout(2, 2));
 
         addButtons(menuPanel);
+
+        menuPrincipal.add(menuPanel);
 
         /* CentralPanel of the game */
         JPanel centralPanel = new JPanel();
@@ -233,8 +237,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
         centralPanel.add(barMenu, BorderLayout.NORTH);
         centralPanel.add(grilleJLabels, BorderLayout.CENTER);
         add(centralPanel);
-        
-        menuPrincipal.add(menuPanel);
+
     }
 
 
@@ -286,7 +289,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
                             tabJLabel[x][y].setIcon(icoColonneHautAttacher);
                         }else tabJLabel[x][y].setIcon(icoColonneHaut);
                         // Si la case au dessous de x,y different de colonne afficher l'icon du bas de la colonne
-                    } else if ((y+1<jeu.SIZE_Y) && !(jeu.getGrille()[x][y + 1] instanceof Colonne)) {
+                    } else if ((y+1<Jeu.SIZE_Y) && !(jeu.getGrille()[x][y + 1] instanceof Colonne)) {
                         if (jeu.getGrille()[x-1][y] instanceof Platform || jeu.getGrille()[x+1][y] instanceof Platform){
                             tabJLabel[x][y].setIcon(icoColonneBasAttacher);
                         }else tabJLabel[x][y].setIcon(icoColonneBas);
@@ -295,9 +298,9 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         tabJLabel[x][y].setIcon(icoColonne);
                     }
                 } else if (jeu.getGrille()[x][y] instanceof Platform) {
-                    if ((x-1>0) && (y-1>0) && (y+1<jeu.SIZE_Y) && jeu.getGrille()[x-1][y] instanceof Colonne && (!(jeu.getGrille()[x-1][y+1] instanceof Colonne) || !(jeu.getGrille()[x-1][y-1] instanceof Colonne)))
+                    if ((x-1>0) && (y-1>0) && (y+1<Jeu.SIZE_Y) && jeu.getGrille()[x-1][y] instanceof Colonne && (!(jeu.getGrille()[x-1][y+1] instanceof Colonne) || !(jeu.getGrille()[x-1][y-1] instanceof Colonne)))
                     {tabJLabel[x][y].setIcon(icoPlatformColoneDroite);}
-                    else if ((x+1<jeu.SIZE_X) && (y-1>0) && (y+1 < jeu.SIZE_Y) && jeu.getGrille()[x+1][y] instanceof Colonne && (!(jeu.getGrille()[x+1][y + 1] instanceof Colonne) || !(jeu.getGrille()[x+1][y-1] instanceof Colonne)))
+                    else if ((x+1<Jeu.SIZE_X) && (y-1>0) && (y+1 < Jeu.SIZE_Y) && jeu.getGrille()[x+1][y] instanceof Colonne && (!(jeu.getGrille()[x+1][y + 1] instanceof Colonne) || !(jeu.getGrille()[x+1][y-1] instanceof Colonne)))
                     {tabJLabel[x][y].setIcon(icoPlatformColoneGauche);}
                     else tabJLabel[x][y].setIcon(icoPlatform);
                 } else if (jeu.getGrille()[x][y] instanceof PlatformV) {
@@ -324,7 +327,12 @@ public class VueControleurGyromite extends JFrame implements Observer {
      */
     private void mettreAJourAffichageMenu() {
         time_label.setText(String.valueOf(jeu.GetTimeLeft()));
-        score_label.setText(String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore());
+        score_label.setText(String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore(jeu.level));
+    }
+
+    private void mettreAJourAffichageMenuPrincipal() {
+        levelOneScore.setText(getHighScore(1));
+        levelTwoScore.setText(getHighScore(2));
     }
 
     @Override
@@ -337,9 +345,9 @@ public class VueControleurGyromite extends JFrame implements Observer {
 
                 if(jeu.checkEnd()){
                     System.out.println("Game End");
-                    menuPrincipal.setVisible(true);
-                    setVisible(false);
                     jeu.reset();
+                    mettreAJourAffichageMenuPrincipal();
+                    menuPrincipal.setVisible(true);
                 }
                 else {
                     if (jeu.isOn){
@@ -408,7 +416,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
         menu_label.setLayout(new GridLayout());
 
         /* Initialize the Score label */
-        String Score_And_HScore = String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore();
+        String Score_And_HScore = String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore(jeu.level);
         score_label = new JLabel(Score_And_HScore);
 
         score_label.setForeground(Color.white);
@@ -493,6 +501,11 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         levelOneButton.setBackground(Color.BLACK);
                     }
                 });
+
+                levelOneScore = new JLabel(getHighScore(1));
+                levelOneScore.setForeground(Color.WHITE);
+                levelOneScore.setFont(new Font(Font.MONOSPACED, levelOneScore.getFont().getStyle(), 25));
+                levelOneButton.add(levelOneScore);
                 panel.add(levelOneButton);
                 
                 // Level 2 Button
@@ -518,6 +531,11 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         levelTwoButton.setBackground(Color.BLACK);
                     }
                 });
+
+                levelTwoScore = new JLabel(getHighScore(2));
+                levelTwoScore.setForeground(Color.WHITE);
+                levelTwoScore.setFont(new Font(Font.MONOSPACED, levelTwoScore.getFont().getStyle(), 25));
+                levelTwoButton.add(levelTwoScore);
                 panel.add(levelTwoButton);
                 
                 // Level 3 Button
@@ -573,11 +591,11 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 panel.add(levelFourButton);
     }
 
-    private String getHighScore(){
+    private String getHighScore(int level){
         String score = "0";
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader("data/scores/score" + String.valueOf(jeu.level) + ".txt"));
+            reader = new BufferedReader(new FileReader("data/scores/score" + String.valueOf(level) + ".txt"));
             score = reader.readLine();
             reader.close();
         } catch (IOException e) {
