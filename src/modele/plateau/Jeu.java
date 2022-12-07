@@ -5,6 +5,7 @@
  */
 package modele.plateau;
 
+import VueControleur.Music;
 import modele.deplacements.Controle4Directions;
 import modele.deplacements.ControleColonne;
 import modele.deplacements.Direction;
@@ -12,20 +13,17 @@ import modele.deplacements.Gravite;
 import modele.deplacements.Ordonnanceur;
 import modele.deplacements.IA;
 
-import javax.swing.*;
+import javax.sound.sampled.*;
 import java.awt.Point;
+import java.io.*;
 import java.util.HashMap;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /** Actuellement, cette classe gère les postions
  * (ajouter conditions de victoire, chargement du plateau, etc.)
  */
 public class Jeu {
+    Music music = new Music("data/music.wav");
 
     public static final int SIZE_X = 24;
     public static final int SIZE_Y = 12;
@@ -68,7 +66,7 @@ public class Jeu {
         //initialisationDesEntites();
         TimeLeft = 1000;
         Score = 0;
-
+        music.play();
     }
 
 
@@ -414,6 +412,7 @@ public class Jeu {
         if (heroDead){
             last_score = 0;
             return true;
+
         }
         if (GetScore() == 600){
             last_score = 600 + GetTimeLeft();
