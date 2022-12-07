@@ -358,7 +358,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
      */
     private void mettreAJourAffichageMenu() {
         time_label.setText(String.valueOf(jeu.GetTimeLeft()));
-        score_label.setText(String.valueOf(jeu.GetScore()) + "\tBest: " +  getHighScore(jeu.level));
+        score_label.setText(String.valueOf(jeu.GetScore() + jeu.GetTimeLeft()) + "\tBest: " +  getHighScore(jeu.level));
     }
 
     private void mettreAJourAffichageMenuPrincipal() {
@@ -537,13 +537,13 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 levelOneHighScore = new JLabel(getHighScore(1));
                 levelOneHighScore.setForeground(Color.WHITE);
                 levelOneHighScore.setFont(new Font(Font.MONOSPACED, levelOneHighScore.getFont().getStyle(), 25));
-                levelOneHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelOneHighScore.setBorder(BorderFactory.createEmptyBorder(280, 420, 0, 0));
                 levelOneButton.add(levelOneHighScore);
                 // Level 1 Score
                 levelOneScore = new JLabel(" ");
                 levelOneScore.setForeground(Color.WHITE);
                 levelOneScore.setFont(new Font(Font.MONOSPACED, levelOneScore.getFont().getStyle(), 25));
-                levelOneScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
+                levelOneScore.setBorder(BorderFactory.createEmptyBorder(280, 120, 0, 0));
                 levelOneButton.add(levelOneScore);
                 // Add level 1 to panel
                 panel.add(levelOneButton);
@@ -575,13 +575,13 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 levelTwoHighScore = new JLabel(getHighScore(2));
                 levelTwoHighScore.setForeground(Color.WHITE);
                 levelTwoHighScore.setFont(new Font(Font.MONOSPACED, levelTwoHighScore.getFont().getStyle(), 25));
-                levelTwoHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelTwoHighScore.setBorder(BorderFactory.createEmptyBorder(280, 420, 0, 0));
                 levelTwoButton.add(levelTwoHighScore);
                 // Level 2 Score
                 levelTwoScore = new JLabel(" ");
                 levelTwoScore.setForeground(Color.WHITE);
                 levelTwoScore.setFont(new Font(Font.MONOSPACED, levelTwoScore.getFont().getStyle(), 25));
-                levelTwoScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
+                levelTwoScore.setBorder(BorderFactory.createEmptyBorder(280, 120, 0, 0));
                 levelTwoButton.add(levelTwoScore);
                 // Add level 2 button to panel
                 panel.add(levelTwoButton);
@@ -614,13 +614,13 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 levelThreeHighScore = new JLabel(getHighScore(3));
                 levelThreeHighScore.setForeground(Color.WHITE);
                 levelThreeHighScore.setFont(new Font(Font.MONOSPACED, levelThreeHighScore.getFont().getStyle(), 25));
-                levelThreeHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelThreeHighScore.setBorder(BorderFactory.createEmptyBorder(280, 420, 0, 0));
                 levelThreeButton.add(levelThreeHighScore);
                 // Level 3 Score
                 levelThreeScore = new JLabel(" ");
                 levelThreeScore.setForeground(Color.WHITE);
                 levelThreeScore.setFont(new Font(Font.MONOSPACED, levelThreeScore.getFont().getStyle(), 25));
-                levelThreeScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
+                levelThreeScore.setBorder(BorderFactory.createEmptyBorder(280, 120, 0, 0));
                 levelThreeButton.add(levelThreeScore);
                 // Add level 3 button to panel
                 panel.add(levelThreeButton);
@@ -654,13 +654,13 @@ public class VueControleurGyromite extends JFrame implements Observer {
                 levelFourHighScore = new JLabel(getHighScore(4));
                 levelFourHighScore.setForeground(Color.WHITE);
                 levelFourHighScore.setFont(new Font(Font.MONOSPACED, levelFourHighScore.getFont().getStyle(), 25));
-                levelFourHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelFourHighScore.setBorder(BorderFactory.createEmptyBorder(280, 420, 0, 0));
                 levelFourButton.add(levelFourHighScore);
                 // Level 4 Score
                 levelFourScore = new JLabel(" ");
                 levelFourScore.setForeground(Color.WHITE);
                 levelFourScore.setFont(new Font(Font.MONOSPACED, levelFourScore.getFont().getStyle(), 25));
-                levelFourScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
+                levelFourScore.setBorder(BorderFactory.createEmptyBorder(280, 120, 0, 0));
                 levelFourButton.add(levelFourScore);
                 // Add button four to panel
                 panel.add(levelFourButton);

@@ -59,6 +59,7 @@ public class Jeu {
 
     /* Hero's score */
     private int Score;
+    private int last_score = 0;
 
     public int level = 1;
 
@@ -237,7 +238,7 @@ public class Jeu {
                                 retour = true;
                             }
                             else {
-                                ((EntiteDynamique) next_entite).ecrase(e);
+                                (next_entite).ecrase(e);
                                 retour = true;
                             }
                         }
@@ -411,15 +412,17 @@ public class Jeu {
 
         // TODO
         if (heroDead){
+            last_score = 0;
             return true;
         }
         if (GetScore() == 600){
-            if (Integer.valueOf(getHighScore()) < GetTimeLeft()){
+            last_score = 600 + GetTimeLeft();
+            if (Integer.valueOf(getHighScore()) < GetTimeLeft()+600){
                 File scoreFile = new File("data/scores/score" + String.valueOf(level) + ".txt");
                 FileWriter scoreWriter;
                 try {
                     scoreWriter = new FileWriter(scoreFile, false);
-                    scoreWriter.write(String.valueOf(GetTimeLeft()));
+                    scoreWriter.write(String.valueOf(GetTimeLeft()+600));
                     scoreWriter.close();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
@@ -428,6 +431,7 @@ public class Jeu {
             }
             return true;
         }
+        if (GetTimeLeft() == 0) {last_score = 0;return true;}
         return false;
     }
 
@@ -534,6 +538,8 @@ public class Jeu {
 
         return score;
     }
+
+    public int getLastScore() {return last_score;}
 
 }
 
