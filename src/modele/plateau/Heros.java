@@ -23,10 +23,15 @@ public class Heros extends EntiteDynamique {
     public boolean peutPermettreDeMonterDescendre() { return false; }
 
     public boolean ecrase(Entite e) {
-        jeu.ecraseEntite(this);
-        Controle4Directions.getInstance().removeEntiteDynamique(this);
-        Gravite.getInstance().removeEntiteDynamique(this);
-        jeu.heroDead = true;
+        if(e instanceof Bot) {
+            if (((Bot) e).isDistrait()) {
+                jeu.heroDead = false;
+            } else {
+                jeu.heroDead = true;
+            }
+        } else {
+            jeu.heroDead = true;
+        }
         return true;
     }
 

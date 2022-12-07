@@ -65,6 +65,9 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private ImageIcon icoLevel3;
     private ImageIcon icoLevel4;
 
+    private ImageIcon icoRadis;
+    private ImageIcon icoSleep;
+
 
     private ImageIcon[] icoBombe = new ImageIcon[4];
     private int current_sprite_bomb;
@@ -100,6 +103,14 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     case KeyEvent.VK_DOWN : Controle4Directions.getInstance().setDirectionCourante(Direction.bas); break;
                     case KeyEvent.VK_UP : Controle4Directions.getInstance().setDirectionCourante(Direction.haut); break;
                     case KeyEvent.VK_Q : ControleColonne.getInstance().setDirectionCourante(); break;
+                    case KeyEvent.VK_ESCAPE : jeu.SetTimeLeft(0); break;
+
+                    /* J'ai volontairement choisis de ne pas faire de classe Controle Radis, et de ne pas faire de getinstance ...
+                    * Car rien ne sert de compliquer le code. Lorsque le hero prend le radis il se supprime et un autre radis
+                    * est créée dès qu'il le repose. Les radis sont tous les mêmes et n'ont aucune perspectives d'évolutions
+                    * Ils n'ont également aucun déplacement. ce sont des objets fixe */
+                    case KeyEvent.VK_E : jeu.pose_radis(Direction.gauche); break;
+                    case KeyEvent.VK_R : jeu.pose_radis(Direction.droite); break;
                 }
             }
         });
@@ -212,6 +223,8 @@ public class VueControleurGyromite extends JFrame implements Observer {
         }
         sprite_bot = sprites_bot_list.listIterator();
 
+        icoRadis = chargerIcone("Images/sprites.png", 72, 254, 16, 16);
+        icoSleep = chargerIcone("Images/sprites.png", 70, 115, 19, 19);
 
     }
 
@@ -252,6 +265,7 @@ public class VueControleurGyromite extends JFrame implements Observer {
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
      */
     private void mettreAJourAffichageJeu() {
+        ArrayList<Point> ico_sleep_pos = new ArrayList<Point>();
 
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
@@ -284,7 +298,12 @@ public class VueControleurGyromite extends JFrame implements Observer {
                             sprite_bot.previous();
                         }
                     }
-                    tabJLabel[x][y].setIcon(sprite_bot.next().get_sprite(d));
+                    if(((Bot) e).isDistrait()) {
+                        tabJLabel[x][y].setIcon(sprite_bot.next().get_sprite(null));
+                        ico_sleep_pos.add(new Point(x,y-1));
+                    } else {
+                        tabJLabel[x][y].setIcon(sprite_bot.next().get_sprite(d));
+                    }
 
                 } else if (jeu.getGrille()[x][y] instanceof Mur) {
                     tabJLabel[x][y].setIcon(icoBedrock);
@@ -322,8 +341,13 @@ public class VueControleurGyromite extends JFrame implements Observer {
                     tabJLabel[x][y].setIcon(sprite_bomb.next().get_sprite());
                 } else if (jeu.getGrille()[x][y] instanceof Corde) {
                     tabJLabel[x][y].setIcon(icoCorde);
+                }else if (jeu.getGrille()[x][y] instanceof Radis) {
+                        tabJLabel[x][y].setIcon(icoRadis);
                 } else {
                     tabJLabel[x][y].setIcon(icoVide);
+                    for (Point i : ico_sleep_pos) {
+                        tabJLabel[i.x][i.y].setIcon(icoSleep);
+                    }
                 }
             }
         }
@@ -479,21 +503,6 @@ public class VueControleurGyromite extends JFrame implements Observer {
         return grille;
     }
 
-
-    private ImageIcon next_sprite_Bomb(int current_sprite) {
-        ImageIcon next;
-
-        switch (current_sprite) {
-            case 3 -> current_sprite = 0;
-            default -> {
-                current_sprite += 1;
-            }
-        }
-        current_sprite_bomb = current_sprite;
-        next = icoBombe[current_sprite_bomb];
-
-        return next;
-    }
 
     public void setMenuVisible(boolean visible) {
         menuPrincipal.setVisible(visible);

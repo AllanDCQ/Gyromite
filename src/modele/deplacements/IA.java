@@ -1,4 +1,5 @@
 package modele.deplacements;
+import modele.plateau.Bot;
 import modele.plateau.Entite;
 import modele.plateau.EntiteDynamique;
 
@@ -32,58 +33,68 @@ public class IA extends RealisateurDeDeplacement {
         Direction ancienneDirection;
 
         for (EntiteDynamique e : lstEntitesDynamiques) {
-            ancienneDirection = e.getDirectionCourante();
+            // e instanceof Bot utilisé simplement pour la sécurité en cas de modification des classes
+            if (e instanceof Bot && ((Bot) e).isDistrait()) {
+                ((Bot) e).decreaseSleepTime();
+                ret = false;
+            } else {
+                ancienneDirection = e.getDirectionCourante();
 
-            /* Champs de vision autour : Devant / Derriere / Haut / Bas */
-            ArrayList<Direction> lstEntitesArroundDirection = new ArrayList<Direction>();
-            lstEntitesArroundDirection.addAll((Arrays.asList(ancienneDirection,directionInverse(ancienneDirection),Direction.haut,Direction.bas)));
-
-
-            ArrayList<Entite> lstEntitesArround = new ArrayList<Entite>();
-            for (int i = 0; i < 4; i++) {
-                lstEntitesArround.add(e.regarderDansLaDirection(lstEntitesArroundDirection.get(i)));
-            }
-
-            /* Champs de vision à l'avant de l'IA */
-            ArrayList<Entite> lstEntitesCibles = new ArrayList<Entite>();
-            for (int i = 1; i < distanceVision; i++) {
-                lstEntitesCibles.add(e.regarderDansLaDirectionDistance(ancienneDirection, i));
-            }
+                /* Champs de vision autour : Devant / Derriere / Haut / Bas */
+                ArrayList<Direction> lstEntitesArroundDirection = new ArrayList<Direction>();
+                lstEntitesArroundDirection.addAll((Arrays.asList(ancienneDirection, directionInverse(ancienneDirection), Direction.haut, Direction.bas)));
 
 
-            /* Recherche de Hector dans le champs vision autour de l'IA (devant et derriere) */
-            for (int i = 0; i < 2; i++) {
-                Entite entiteArround = lstEntitesArround.get(i);
-                Direction entiteArroundDirection = lstEntitesArroundDirection.get(i);
-
-                if (entiteArround != null && entiteArround.equals(e.getHero())) {
-                    if (ancienneDirection != entiteArroundDirection) {
-                        ancienneDirection = entiteArroundDirection;
-                        // Ne fait que se retourner et n'avance pas
-                    } else {
-                        e.avancerDirectionChoisie(ancienneDirection);
-                    }
-                    hero_located = true;
+                ArrayList<Entite> lstEntitesArround = new ArrayList<Entite>();
+                for (int i = 0; i < 4; i++) {
+                    lstEntitesArround.add(e.regarderDansLaDirection(lstEntitesArroundDirection.get(i)));
                 }
-            }
 
-            /* Recherche de Hector dans le champs de vision à l'avant de l'IA */
-            if (lstEntitesArround.get(0) == null || lstEntitesArround.get(0).peutEtreEcrase()) { // Si l'avant peut être écrasé
-                for (Entite entitesCibles : lstEntitesCibles) {
-                    if (entitesCibles != null && entitesCibles.equals(e.getHero())) {
-                        e.avancerDirectionChoisie(ancienneDirection);
+                /* Champs de vision à l'avant de l'IA */
+                ArrayList<Entite> lstEntitesCibles = new ArrayList<Entite>();
+                for (int i = 1; i < distanceVision; i++) {
+                    lstEntitesCibles.add(e.regarderDansLaDirectionDistance(ancienneDirection, i));
+                }
+
+
+                /* Recherche de Hector dans le champs vision autour de l'IA (devant et derriere) */
+                for (int i = 0; i < 2; i++) {
+                    Entite entiteArround = lstEntitesArround.get(i);
+                    Direction entiteArroundDirection = lstEntitesArroundDirection.get(i);
+
+                    if (entiteArround != null && entiteArround.equals(e.getHero())) {
+                        if (ancienneDirection != entiteArroundDirection) {
+                            ancienneDirection = entiteArroundDirection;
+                            // Ne fait que se retourner et n'avance pas
+                        } else {
+                            e.avancerDirectionChoisie(ancienneDirection);
+                        }
                         hero_located = true;
                     }
                 }
+
+                /* Recherche de Hector dans le champs de vision à l'avant de l'IA */
+                if (lstEntitesArround.get(0) == null || lstEntitesArround.get(0).peutEtreEcrase()) { // Si l'avant peut être écrasé
+                    for (Entite entitesCibles : lstEntitesCibles) {
+                        if (entitesCibles != null && entitesCibles.equals(e.getHero())) {
+                            Entite entiteBasDevantDerriere = e.regarderDansLaDirectionDouble(Direction.bas, lstEntitesArroundDirection.get(0));
+                            if(entiteBasDevantDerriere != null && entiteBasDevantDerriere.peutServirDeSupport()) {
+                                e.avancerDirectionChoisie(ancienneDirection);
+                                hero_located = true;
+                            }
+
+                        }
+                    }
+                }
+
+                e.setDirectionCourante(ancienneDirection);
+
+                /* Si le hero n'a pas été repéré alors déplacement */
+                if (!hero_located) {
+                    deplacementIA(e, lstEntitesArroundDirection, lstEntitesArround);
+                }
+
             }
-
-            e.setDirectionCourante(ancienneDirection);
-
-            /* Si le hero n'a pas été repéré alors déplacement */
-            if (!hero_located) {
-                deplacementIA(e, lstEntitesArroundDirection, lstEntitesArround);
-            }
-
         }
         return ret;
     }
@@ -108,48 +119,54 @@ public class IA extends RealisateurDeDeplacement {
         List<Integer> lstPriorities = new ArrayList<Integer>();
 
         if(bot.getDirectionUpward()) {
-            lstPriorities.addAll((Arrays.asList(0, 1, 2, 3)));
+            lstPriorities.addAll((Arrays.asList(0, 2, 1, 3)));
         } else if(bot.getDirectionDescent()) {
-            lstPriorities.addAll((Arrays.asList(0, 1, 3, 2)));
+            lstPriorities.addAll((Arrays.asList(0, 3, 1, 2)));
         } else {
             lstPriorities.addAll((Arrays.asList(2, 3, 0, 1)));
         }
 
         boolean endBoucle = false;
-
         for (Integer i :lstPriorities ) {
             switch (i) {
                 case 0:
                 case 1:
                     if(lstEntitesArround.get(i) != null && lstEntitesArround.get(i).peutPermettreDeMonterDescendre()) {
-                        bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(i));
-                        bot.setDirectionDescent(false);
-                        bot.setDirectionUpward(false);
-                        bot.setDirectionCourante(lstEntitesArroundDirection.get(i));
-                        endBoucle = true;
-                    } else if(entiteBasDevantDerriere.get(i) != null && entiteBasDevantDerriere.get(i).peutServirDeSupport()) {
-                        if(lstEntitesArround.get(i) == null || (lstEntitesArround.get(i) != null && lstEntitesArround.get(i).peutEtreEcrase())) {
-                            bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(i));
+                        if(bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(i))){
                             bot.setDirectionDescent(false);
                             bot.setDirectionUpward(false);
                             bot.setDirectionCourante(lstEntitesArroundDirection.get(i));
+                        }
+
+                        endBoucle = true;
+
+                    } else if(entiteBasDevantDerriere.get(i) != null && entiteBasDevantDerriere.get(i).peutServirDeSupport()) {
+                        if(lstEntitesArround.get(i) == null || (lstEntitesArround.get(i) != null && lstEntitesArround.get(i).peutEtreEcrase()) ) {
+                            if(bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(i))) {
+                                bot.setDirectionDescent(false);
+                                bot.setDirectionUpward(false);
+                                bot.setDirectionCourante(lstEntitesArroundDirection.get(i));
+                            }
+
                             endBoucle = true;
                         }
                     }
                     break;
                 case 2:
                     if (lstEntitesArround.get(2) != null && lstEntitesArround.get(2).peutPermettreDeMonterDescendre()) {
-                        bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(2));
-                        bot.setDirectionDescent(false);
-                        bot.setDirectionUpward(true);
+                        if(bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(2))) {
+                            bot.setDirectionDescent(false);
+                            bot.setDirectionUpward(true);
+                        }
                         endBoucle = true;
                     }
                     break;
                 case 3:
                     if (lstEntitesArround.get(3) != null && lstEntitesArround.get(3).peutPermettreDeMonterDescendre()) {
-                        bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(3));
-                        bot.setDirectionDescent(true);
-                        bot.setDirectionUpward(false);
+                        if (bot.avancerDirectionChoisie(lstEntitesArroundDirection.get(3))){
+                            bot.setDirectionDescent(true);
+                            bot.setDirectionUpward(false);
+                        }
                         endBoucle = true;
                     }
                     break;

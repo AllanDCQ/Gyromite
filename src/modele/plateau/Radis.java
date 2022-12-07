@@ -1,8 +1,8 @@
 package modele.plateau;
 
-public class Bombe extends EntiteStatique{
+public class Radis extends EntiteStatique{
 
-    public Bombe(Jeu _jeu) {
+    public Radis(Jeu _jeu) {
         super(_jeu);
     }
 
@@ -18,11 +18,13 @@ public class Bombe extends EntiteStatique{
     @Override
     public boolean ecrase(Entite e ) {
         if (e == jeu.getHector()){
-            jeu.ecraseEntite(this);
-            jeu.increase_Score();
-            return true;
+            jeu.recupere_radis();
         }
-        return false;
+        if (e instanceof Bot ){
+            ((Bot) e).setDistrait(true);
+        }
+        jeu.ecraseEntite(this);
+        return true;
     }
 
 }
