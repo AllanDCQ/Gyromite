@@ -20,12 +20,7 @@ public abstract class Entite {
     public abstract boolean peutServirDeSupport(); // permet de stopper la gravité, prendre appui pour sauter
     public abstract boolean peutPermettreDeMonterDescendre(); // si utilisation de corde (attention, l'environnement ne peut pour l'instant sotker qu'une entité par case (si corde : 2 nécessaires), améliorations à prévoir)
 
-    public int getCurrent_sprite() {
-        return current_sprite;
-    };
+    public abstract boolean ecrase(Entite e);
 
-    public void setCurrent_sprite(int next_sprite){
-        current_sprite = next_sprite;
-    };
 
 }

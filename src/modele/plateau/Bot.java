@@ -17,12 +17,8 @@ import java.util.Random;
 public class Bot extends EntiteDynamique {
     private Random r = new Random();
 
-    /*
-     * La direction va de gauche à droite ou de droite à gauche.
-     * Lorsqu'il rencontre un obstacle le sens change ou qu'il perd de vue le hero
-     */
-
-    public boolean sleep_avance;
+    private boolean distrait;
+    public int time_sleep = 0;
 
     public Bot(Jeu _jeu) {
         super(_jeu);
@@ -54,4 +50,22 @@ public class Bot extends EntiteDynamique {
         }
     }
 
+
+    public boolean isDistrait() {
+        return distrait;
+    }
+
+    public void setDistrait(boolean distrait) {
+        time_sleep = 30;
+        this.distrait = distrait;
+    }
+
+    public void decreaseSleepTime() {
+        if (time_sleep > 0) {
+            time_sleep -= 1;
+            distrait = true;
+        } else {
+            distrait = false;
+        }
+    }
 }

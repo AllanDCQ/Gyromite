@@ -37,6 +37,10 @@ public class Jeu {
     public boolean isOn = false; 
     private Heros hector;
     public boolean heroDead = false;
+
+    public boolean haveRadis = false;
+    private ArrayList<Radis> radis = new ArrayList<Radis>();
+
     private ArrayList<Bot> smicks = new ArrayList<Bot>();
 
     protected HashMap<Entite, Point> map = new  HashMap<Entite, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
@@ -114,6 +118,12 @@ public class Jeu {
         grilleEntites[position.x][position.y] = null;
     }
 
+    public void ecraseEntite(EntiteStatique e){
+        Point position = map.get(e);
+        map.remove(e);
+        grilleEntites[position.x][position.y] = null;
+    }
+
 
     /**
      * Permet par exemple a une entité de percevoir son environnement proche et de définir sa stratégie de déplacement
@@ -154,31 +164,32 @@ public class Jeu {
                 case bas:
                 case haut:
                     /* S'il n'a pas déjà avancé ce tour */
-                    if (cmptDeplV.get(e) == null) {
+                    if (cmptDeplV.get(e) == null && cmptDeplH.get(e) == null) {
                         /* Si la prochaine case est vide */
                         if (next_entite == null) {retour = true;}
                         /* Si la prochaine case n'est pas vide */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase()){
-                                ((EntiteDynamique) next_entite).ecrase(e);
+                                next_entite.ecrase(e);
                                 retour = true;
                             }
                             else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
                         }
+
                         cmptDeplV.put(e, 1);
                     }
                     break;
                 case gauche:
                 case droite:
-                    if (cmptDeplH.get(e) == null) {
+                    if (cmptDeplH.get(e) == null && cmptDeplV.get(e) == null) {
                         /* Si la prochaine case est vide */
                         if (next_entite == null) {retour = true;}
                         /* Si la prochaine case est une entité */
                         else {
                             /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
                             if (next_entite.peutEtreEcrase()){
-                                ((EntiteDynamique) next_entite).ecrase(e);
+                                next_entite.ecrase(e);
                                 retour = true;
                             }
                             else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
@@ -189,13 +200,12 @@ public class Jeu {
                     break;
             }
         }
-    
+
         if (retour) {
             deplacerEntite(pCourant, pCible, (EntiteDynamique) e);
         }
         return retour;
     }
-
         /**
      * Make the move if the entity is allowed
      * @param e Selected entity
@@ -354,6 +364,10 @@ public class Jeu {
         return TimeLeft;
     }
 
+    public void SetTimeLeft(int _time) {
+        TimeLeft = _time;
+    }
+
 
     /**
      * Increase the variable of the time (TimeLeft) each seconde
@@ -365,6 +379,32 @@ public class Jeu {
             TimeLeft = TimeLeft - 1;
             Time_wait = 0;
         }
+    }
+
+    public void recupere_radis() {
+        haveRadis = true;
+    }
+
+    public void pose_radis(Direction d) {
+        if (haveRadis) {
+            EntiteDynamique hero = getHector();
+            Point pCourant = map.get(hero);
+            Point pCible;
+            if (d == Direction.droite) {
+                pCible = new Point(pCourant.x +1, pCourant.y);
+            } else {
+                pCible = new Point(pCourant.x -1, pCourant.y);
+            }
+
+            if (objetALaPosition(pCible) == null) {
+                Radis radis_s = new Radis(this);
+                radis.add(0,radis_s);
+                addEntite(radis.get(0), pCible.x, pCible.y);
+                haveRadis = false;
+            }
+
+        }
+
     }
 
     public boolean checkEnd(){
@@ -398,6 +438,7 @@ public class Jeu {
         resetGrille();
         smicks.clear();
         map.clear();
+        radis.clear();
         Controle4Directions.reset();
         ControleColonne.reset();
         Gravite.reset();
@@ -407,6 +448,7 @@ public class Jeu {
         heroDead = false;
         isOn = false;
         TimeLeft = 1000;
+        haveRadis = false;
     }
 
 
@@ -460,6 +502,11 @@ public class Jeu {
                         //if (!ordonnanceur.contains(ControleColonne.getInstance())){
                             ordonnanceur.add(ControleColonne.getInstance());
                         //}
+                        break;
+                    case "K":
+                        Radis radis_s = new Radis(this);
+                        radis.add(0,radis_s);
+                        addEntite(radis_s, Integer.parseInt(line_info[1]), Integer.parseInt(line_info[2]));
                         break;
                 }
                 // read next line

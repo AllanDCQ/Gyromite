@@ -9,6 +9,11 @@ public class Corde extends EntiteStatique {
     public boolean peutPermettreDeMonterDescendre() { return true; }
 
     @Override
+    public boolean ecrase(Entite e) {
+        return false;
+    }
+
+    @Override
     public boolean peutEtreEcrase() { return false; }
 
 }
