@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -34,8 +33,16 @@ public class VueControleurGyromite extends JFrame implements Observer {
     private Jeu jeu; // référence sur une classe de modèle : permet d'accéder aux données du modèle pour le rafraichissement, permet de communiquer les actions clavier (ou souris)
 
     private JFrame menuPrincipal;
+
+    private JLabel levelOneHighScore;
+    private JLabel levelTwoHighScore;
+    private JLabel levelThreeHighScore;
+    private JLabel levelFourHighScore;
+
     private JLabel levelOneScore;
     private JLabel levelTwoScore;
+    private JLabel levelThreeScore;
+    private JLabel levelFourScore;
 
     private int sizeX; // taille de la grille affichée
     private int sizeY;
@@ -331,8 +338,24 @@ public class VueControleurGyromite extends JFrame implements Observer {
     }
 
     private void mettreAJourAffichageMenuPrincipal() {
-        levelOneScore.setText(getHighScore(1));
-        levelTwoScore.setText(getHighScore(2));
+        levelOneHighScore.setText(getHighScore(1));
+        levelTwoHighScore.setText(getHighScore(2));
+        levelThreeHighScore.setText(getHighScore(3));
+        levelFourHighScore.setText(getHighScore(4));
+        switch(jeu.level) {
+            case 1:
+                levelOneScore.setText(String.valueOf(jeu.getLastScore()));
+                break;
+            case 2:
+                levelTwoScore.setText(String.valueOf(jeu.getLastScore()));
+                break;
+            case 3:
+                levelThreeScore.setText(String.valueOf(jeu.getLastScore()));
+                break;
+            case 4:
+                levelFourScore.setText(String.valueOf(jeu.getLastScore()));
+                break;
+        }
     }
 
     @Override
@@ -501,11 +524,19 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         levelOneButton.setBackground(Color.BLACK);
                     }
                 });
-
-                levelOneScore = new JLabel(getHighScore(1));
+                // Level 1 High Score
+                levelOneHighScore = new JLabel(getHighScore(1));
+                levelOneHighScore.setForeground(Color.WHITE);
+                levelOneHighScore.setFont(new Font(Font.MONOSPACED, levelOneHighScore.getFont().getStyle(), 25));
+                levelOneHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelOneButton.add(levelOneHighScore);
+                // Level 1 Score
+                levelOneScore = new JLabel(" ");
                 levelOneScore.setForeground(Color.WHITE);
                 levelOneScore.setFont(new Font(Font.MONOSPACED, levelOneScore.getFont().getStyle(), 25));
+                levelOneScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
                 levelOneButton.add(levelOneScore);
+                // Add level 1 to panel
                 panel.add(levelOneButton);
                 
                 // Level 2 Button
@@ -531,11 +562,19 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         levelTwoButton.setBackground(Color.BLACK);
                     }
                 });
-
-                levelTwoScore = new JLabel(getHighScore(2));
+                // Level 2 High Score
+                levelTwoHighScore = new JLabel(getHighScore(2));
+                levelTwoHighScore.setForeground(Color.WHITE);
+                levelTwoHighScore.setFont(new Font(Font.MONOSPACED, levelTwoHighScore.getFont().getStyle(), 25));
+                levelTwoHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelTwoButton.add(levelTwoHighScore);
+                // Level 2 Score
+                levelTwoScore = new JLabel(" ");
                 levelTwoScore.setForeground(Color.WHITE);
                 levelTwoScore.setFont(new Font(Font.MONOSPACED, levelTwoScore.getFont().getStyle(), 25));
+                levelTwoScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
                 levelTwoButton.add(levelTwoScore);
+                // Add level 2 button to panel
                 panel.add(levelTwoButton);
                 
                 // Level 3 Button
@@ -562,9 +601,22 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         levelThreeButton.setBackground(Color.BLACK);
                     }
                 });
+                // Level 3 High Score
+                levelThreeHighScore = new JLabel(getHighScore(3));
+                levelThreeHighScore.setForeground(Color.WHITE);
+                levelThreeHighScore.setFont(new Font(Font.MONOSPACED, levelThreeHighScore.getFont().getStyle(), 25));
+                levelThreeHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelThreeButton.add(levelThreeHighScore);
+                // Level 3 Score
+                levelThreeScore = new JLabel(" ");
+                levelThreeScore.setForeground(Color.WHITE);
+                levelThreeScore.setFont(new Font(Font.MONOSPACED, levelThreeScore.getFont().getStyle(), 25));
+                levelThreeScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
+                levelThreeButton.add(levelThreeScore);
+                // Add level 3 button to panel
                 panel.add(levelThreeButton);
         
-                // Level 3 Button
+                // Level 4 Button
                 JButton levelFourButton = new JButton(icoLevel4);
                 levelFourButton.setBackground(Color.BLACK);
                 levelFourButton.setForeground(Color.BLACK);
@@ -588,6 +640,20 @@ public class VueControleurGyromite extends JFrame implements Observer {
                         levelFourButton.setBackground(Color.BLACK);
                     }
                 });
+
+                // Level 4 High Score
+                levelFourHighScore = new JLabel(getHighScore(4));
+                levelFourHighScore.setForeground(Color.WHITE);
+                levelFourHighScore.setFont(new Font(Font.MONOSPACED, levelFourHighScore.getFont().getStyle(), 25));
+                levelFourHighScore.setBorder(BorderFactory.createEmptyBorder(280, 440, 0, 0));
+                levelFourButton.add(levelFourHighScore);
+                // Level 4 Score
+                levelFourScore = new JLabel(" ");
+                levelFourScore.setForeground(Color.WHITE);
+                levelFourScore.setFont(new Font(Font.MONOSPACED, levelFourScore.getFont().getStyle(), 25));
+                levelFourScore.setBorder(BorderFactory.createEmptyBorder(280, 200, 0, 0));
+                levelFourButton.add(levelFourScore);
+                // Add button four to panel
                 panel.add(levelFourButton);
     }
 
