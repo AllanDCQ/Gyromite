@@ -39,17 +39,19 @@ public class Bot extends EntiteDynamique {
     }
 
     public boolean ecrase(Entite e) {
+        // Si le Bot et ecrase par hero on ecrasse le hero a la place
         if (e == jeu.getHector()){
             jeu.getHector().ecrase(this);
             return false;
         }else{
+            // Sinon le Bot et surement ecrase par une colonne et donc il meurt.
+            // Ecrase le Bot et le retire des realisateur de deplacement IA et gravite
             jeu.ecraseEntite(this);
             IA.getInstance().removeEntiteDynamique(this);
             Gravite.getInstance().removeEntiteDynamique(this);
             return true;
         }
     }
-
 
     public boolean isDistrait() {
         return distrait;

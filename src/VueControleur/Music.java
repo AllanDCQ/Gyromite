@@ -32,8 +32,12 @@ public class Music {
         }
     }
     public void stop() throws IOException {
-        sound.close();
-        clip.close();
-        clip.stop();
+        try {
+            sound.close();
+            clip.close();
+            clip.stop();
+        } catch (Exception e) {
+            System.out.println("Error lecture music");
+        }
     }
 }

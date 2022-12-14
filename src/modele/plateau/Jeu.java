@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * (ajouter conditions de victoire, chargement du plateau, etc.)
  */
 public class Jeu {
-    Music music = new Music("data/music.wav");
+    public Music music = new Music("data/music.wav");
 
     public static final int SIZE_X = 24;
     public static final int SIZE_Y = 12;
@@ -168,11 +168,13 @@ public class Jeu {
                         if (next_entite == null) {retour = true;}
                         /* Si la prochaine case n'est pas vide */
                         else {
-                            /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
+                            /* Si la prochaine case est une entité qui peut être écrasée*/
                             if (next_entite.peutEtreEcrase()){
+                                // ecrase l'entite
                                 next_entite.ecrase(e);
                                 retour = true;
                             }
+                            /* Si la prochaine case est un entite qui permet d'escalader */
                             else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
                         }
 
@@ -186,11 +188,12 @@ public class Jeu {
                         if (next_entite == null) {retour = true;}
                         /* Si la prochaine case est une entité */
                         else {
-                            /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
+                            /* Si la prochaine case est une entité qui peut être écrasée*/
                             if (next_entite.peutEtreEcrase()){
                                 next_entite.ecrase(e);
                                 retour = true;
                             }
+                            /* Si la prochaine case est un entite qui permet d'escalader */
                             else if (next_entite.peutPermettreDeMonterDescendre()) {retour = true;}
 
                         }
@@ -229,13 +232,15 @@ public class Jeu {
                     if (next_entite == null) {retour = true;}
                     /* Si la prochaine case n'est pas vide */
                     else {
-                        /* Si la prochaine case est une entité qui peut être écrasée ou permet d'escalader */
+                        /* Si la prochaine case est une entité qui peut être écrasée */
                         if (next_entite.peutEtreEcrase()) {
                             if ( objetALaPosition(calculerPointCibleDistance(pCourant, d, e.taille)) == null && d == Direction.haut ){
+                                // faire monte l'entite avec la colone si possible
                                 deplacerEntite(map.get(next_entite), calculerPointCibleDistance(pCourant, d, e.taille), (EntiteDynamique)next_entite);
                                 retour = true;
                             }
                             else {
+                                // si peu pas bouge avec la colone ecrase l'entite
                                 (next_entite).ecrase(e);
                                 retour = true;
                             }
@@ -408,14 +413,16 @@ public class Jeu {
 
     public boolean checkEnd(){
 
-        // TODO
+        // Si le hero et more renvoyer fin
         if (heroDead){
             last_score = 0;
             return true;
 
         }
+        // Si les 6 bombe on etait recolter
         if (GetScore() == 600){
             last_score = 600 + GetTimeLeft();
+            // Si le score obtenu meilleur que le meilleur score actuelle ecrire le score obtenu dans le fichier du high score
             if (Integer.valueOf(getHighScore()) < GetTimeLeft()+600){
                 File scoreFile = new File("data/scores/score" + String.valueOf(level) + ".txt");
                 FileWriter scoreWriter;
@@ -430,7 +437,8 @@ public class Jeu {
             }
             return true;
         }
-        if (GetTimeLeft() == 0) {last_score = 0;return true;}
+        // Si plus de temps
+        if (GetTimeLeft() == 0) {last_score = 0; return true;}
         return false;
     }
 
@@ -457,8 +465,11 @@ public class Jeu {
 
     public void loadLevel(String fileName){
 
+        // Fonction qui permet d'ajoute les entites au jeu a partire d'un fichier csv
+
         BufferedReader reader;
         try {
+            // Lire le csv
             reader = new BufferedReader(new FileReader(fileName));
             String line = reader.readLine();
             while (line != null) {
@@ -520,13 +531,13 @@ public class Jeu {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private String getHighScore(){
         String score = "0";
         BufferedReader reader;
         try {
+            // A partire d'un niveau lire le meilleur score qui et stocker dans un fichier txt
             reader = new BufferedReader(new FileReader("data/scores/score" + String.valueOf(level) + ".txt"));
             score = reader.readLine();
             reader.close();
@@ -534,7 +545,6 @@ public class Jeu {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         return score;
     }
 

@@ -60,21 +60,21 @@ public class ControleColonne extends RealisateurDeDeplacement {
                         break;
 
                     case haut:
-                        // repeter N fois avec N la taille de la colonne a laquelle cette entite apartient
+                        // tant que la colonne lui reste un mouvement vers le haut on avance la colonne vers le haut
                         if (((Colonne)e).restant > 0){
-                            // la colonne et EN BAS, et lentite apres et null ou ecrasable
                             if (e.avancerDirectionChoisie(Direction.haut)){
                                 ret = true;
+                                // reste -1 case a bouge vers la direction
                                 ((Colonne)e).restant -= 1;
                             }
                         }
                         break;
                     case bas:
-                        // repeter N fois avec N la taille de la colonne a laquelle cette entite apartient
+                        // tant que la colonne lui reste un mouvement vers le bas on avance la colonne vers le haut
                         if (((Colonne)e).restant > 0){
-                            // la colonne et EN HAUT, et lentite apres et null ou ecrasable
                             if (e.avancerDirectionChoisie(Direction.bas)){
                                 ret = true;
+                                // reste -1 case a bouge vers la direction
                                 ((Colonne)e).restant -= 1;
                             }
                         }

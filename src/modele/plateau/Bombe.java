@@ -17,11 +17,13 @@ public class Bombe extends EntiteStatique{
 
     @Override
     public boolean ecrase(Entite e ) {
+        // Si la bombe a etait ecrase par hector on incremente le score et ecrase (delete) la bombe
         if (e == jeu.getHector()){
             jeu.ecraseEntite(this);
             jeu.increase_Score();
             return true;
         }
+        // sinon ne rien faire
         return false;
     }
 
