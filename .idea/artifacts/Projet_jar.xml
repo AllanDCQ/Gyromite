@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="Projet:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Projet_jar</output-path>
+    <root id="root">
+      <element id="archive" name="Projet.jar">
+        <element id="module-output" name="Projet" />
+      </element>
+      <element id="file-copy" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar" />
+    </root>
+  </artifact>
+</component>
