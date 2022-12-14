@@ -1,0 +1,366 @@
+"plantuml.commandArgs": [
+"-DGRAPHVIZ_DOT="{PATH_TO_GRAPHVIZ}/bin/dot",
+]
+@startuml
+package "vue_controleur" {
+    class SpritesBomb
+    abstract class SpritesEntite
+    class SpritesEntiteDynamique
+    class VueControleurGyromite
+    class "<<?>> (controleur clavier)"
+    class   "Music"
+}
+
+package "deplacements" {
+    class Controle4Directions
+    class ControleColonne
+    enum Direction
+    class Gravite
+    class IA
+    class Ordonnanceur
+    abstract class RealisateurDeDeplacement
+}
+
+package "plateau" {
+    class Bombe
+    class Bot
+    class Colonne
+    class Corde
+    abstract class Entite
+    abstract class EntiteDynamique
+    abstract class EntiteStatique
+    class Heros
+    class  Jeu
+    class Mur
+    class Platform
+    class PlatformV
+    class Radis
+}
+
+class JFrame
+class Observer
+class Observable
+class KeyAdapter
+class Runnable
+class Thread
+
+
+JFrame <|-- VueControleurGyromite
+Observer <|.. VueControleurGyromite
+SpritesEntite <|-- SpritesEntiteDynamique
+SpritesEntite <|-- SpritesBomb
+VueControleurGyromite "1" -- "1..n" SpritesEntite
+KeyAdapter <|. "<<?>> (controleur clavier)"
+
+VueControleurGyromite "1" - "1" "<<?>> (controleur clavier)"
+Observable "n" -- "1" Observer
+
+Observable <|-- Ordonnanceur
+Runnable <|.. Ordonnanceur
+Thread "1" -- Ordonnanceur
+RealisateurDeDeplacement <|-- Gravite
+RealisateurDeDeplacement <|-- ControleColonne
+RealisateurDeDeplacement <|-- Controle4Directions
+RealisateurDeDeplacement <|-- IA
+
+Ordonnanceur "1" -- "n"RealisateurDeDeplacement
+
+Controle4Directions "1" -- "1" "<<?>> (controleur clavier)"
+
+Entite <|-- EntiteDynamique
+Entite <|-- EntiteStatique
+EntiteDynamique <|- Heros
+EntiteDynamique <|-- Bot
+EntiteDynamique <|-- Colonne
+EntiteStatique <|-- Mur
+EntiteStatique <|-- Platform
+EntiteStatique <|-- PlatformV
+EntiteStatique <|-- Radis
+EntiteStatique <|-- Bombe
+EntiteStatique <|-- Corde
+
+EntiteDynamique "1..n" -- "1..n"RealisateurDeDeplacement
+Jeu "1" -- "1" VueControleurGyromite
+Jeu "1" -- "1" Ordonnanceur
+Jeu "1" -- "n" Entite
+Jeu "1" -- "1" Music
+
+
+
+
+
+
+
+"Music" : Clip clip
+"Music" : AudioInputStream sound
+"Music" : Music(String soundFileName)
+"Music" : void play()
+"Music" : void stop()
+"Music" : void setFile(String soundFileName)
+
+"Jeu" : + Music music
+"Jeu" : + int SIZE_X
+"Jeu" : + int SIZE_Y
+"Jeu" : - HashMap<Entite, Integer> cmptDeplH
+"Jeu" : - HashMap<Entite, Integer> cmptDeplV
+"Jeu" : + boolean isOn
+"Jeu" : - Heros hector
+"Jeu" : + boolean heroDead
+"Jeu" : + boolean haveRadis
+"Jeu" : - ArrayList<Radis> radis
+"Jeu" : - ArrayList<Bot> smicks
+"Jeu" : # HashMap<Entite, Point> map
+"Jeu" : - Entite[][] grilleEntites
+"Jeu" : - Ordonnanceur ordonnanceur
+"Jeu" : - int TimeLeft
+"Jeu" : - int Slepp_ms
+"Jeu" : + int Time_wait
+"Jeu" : - int Score
+"Jeu" : - int last_score
+"Jeu" : + int level
+
+"Jeu" : + Jeu()
+"Jeu" : + void resetCmptDepl()
+"Jeu" : + void start(long _pause)
+"Jeu" : + Entite[][] getGrille()
+"Jeu" : + void resetGrille()
+"Jeu" : + Heros getHector()
+"Jeu" : + void addEntite(Entite e, int x, int y)
+"Jeu" : + void ecraseEntite(EntiteDynamique e)
+"Jeu" : + void ecraseEntite(EntiteStatique e)
+"Jeu" : + Entite regarderDansLaDirection(Entite e, Direction d)
+"Jeu" : + Entite regarderDansLaDirectionDistance(Entite e, Direction d, int distance)
+"Jeu" : + boolean deplacerEntite(Entite e, Direction d)
+"Jeu" : + boolean deplacerColonne(Colonne e, Direction d)
+"Jeu" : - Point calculerPointCible(Point pCourant, Direction d)
+"Jeu" : - Point calculerPointCibleDistance(Point pCourant, Direction d, int distance)
+"Jeu" : - void deplacerEntite(Point pCourant, Point pCible, EntiteDynamique e)
+"Jeu" : - boolean contenuDansGrille(Point p)
+"Jeu" : + Entite objetALaPosition(Point p)
+"Jeu" : + Ordonnanceur getOrdonnanceur()
+"Jeu" : + int GetScore()
+"Jeu" : + int GetTimeLeft()
+"Jeu" : + void SetTimeLeft(int _time)
+"Jeu" : + void increase_TimeLeft()
+"Jeu" : + void recupere_radis()
+"Jeu" : + void pose_radis(Direction d)
+"Jeu" : + boolean checkEnd()
+"Jeu" : + void reset()
+"Jeu" : + void loadLevel(String fileName)
+"Jeu" : - String getHighScore()
+"Jeu" : +  int getLastScore()
+
+SpritesBomb : + ListIterator<ImageIcon> explose
+SpritesBomb : + SpritesBomb(ArrayList<ImageIcon> attend, ArrayList<ImageIcon> explosion)
+SpritesBomb : + ImageIcon get_sprite()
+SpritesBomb : + void resetIt(ListIterator<ImageIcon> attente)
+
+
+SpritesEntite : + ListIterator<ImageIcon> attente
+SpritesEntite : + Iterator<ListIterator<ImageIcon>> iterator()
+
+SpritesEntiteDynamique : + ListIterator<ImageIcon> marche_gauche
+SpritesEntiteDynamique : + ListIterator<ImageIcon> marche_droite
+SpritesEntiteDynamique : + ListIterator<ImageIcon> monter
+SpritesEntiteDynamique : + ListIterator<ImageIcon> tomber
+SpritesEntiteDynamique : + SpritesEntiteDynamique(ArrayList<ImageIcon> droite, ArrayList<ImageIcon> gauche, ArrayList<ImageIcon> monte, ArrayList<ImageIcon> tombe, ArrayList<ImageIcon> attend)
+SpritesEntiteDynamique : + ImageIcon get_sprite(Direction direction)
+SpritesEntiteDynamique : + void resetIt(Direction d)
+
+SpritesEntite <|-- SpritesEntiteDynamique
+SpritesEntite <|-- SpritesBomb
+
+
+VueControleurGyromite : - Jeu Jeu 
+VueControleurGyromite : - JFrame menuPrincipal
+VueControleurGyromite : - JLabel levelOneHighScore
+VueControleurGyromite : - JLabel levelTwoHighScore
+VueControleurGyromite : - JLabel levelThreeHighScore
+VueControleurGyromite : - JLabel levelFourHighScore
+VueControleurGyromite : - JLabel levelOneScore
+VueControleurGyromite : - JLabel levelTwoScore
+VueControleurGyromite : - JLabel levelThreeScore
+VueControleurGyromite : - JLabel levelFourScore
+VueControleurGyromite : - int sizeX 
+VueControleurGyromite : - int sizeY
+VueControleurGyromite : - ImageIcon icoVide
+VueControleurGyromite : - ImageIcon icoColonne
+VueControleurGyromite : - ImageIcon icoColonneHautAttacher
+VueControleurGyromite : - ImageIcon icoColonneBasAttacher
+VueControleurGyromite : - ImageIcon icoBedrock
+VueControleurGyromite : - ImageIcon icoPlatform
+VueControleurGyromite : - ImageIcon icoCorde
+VueControleurGyromite : - ImageIcon icoColonneHaut
+VueControleurGyromite : - ImageIcon icoColonneBas
+VueControleurGyromite : - ImageIcon icoPlatformV
+VueControleurGyromite : - ImageIcon icoPlatformColoneGauche
+VueControleurGyromite : - ImageIcon icoPlatformColoneDroite
+VueControleurGyromite : - ImageIcon icoLevel1
+VueControleurGyromite : - ImageIcon icoLevel2
+VueControleurGyromite : - ImageIcon icoLevel3
+VueControleurGyromite : - ImageIcon icoLevel4
+VueControleurGyromite : - ImageIcon icoRadis
+VueControleurGyromite : - ImageIcon icoSleep
+VueControleurGyromite : - ImageIcon[] icoBombe = new ImageIcon[4]
+VueControleurGyromite : - int current_sprite_bomb
+VueControleurGyromite : - JLabel[][] tabJLabel
+VueControleurGyromite : - JLabel menu_label 
+VueControleurGyromite : - JLabel time_label 
+VueControleurGyromite : - JLabel score_label 
+VueControleurGyromite : - ListIterator<SpritesEntiteDynamique> sprite_bot
+VueControleurGyromite : - SpritesEntiteDynamique sprite_hero
+VueControleurGyromite : - ListIterator<SpritesBomb> sprite_bomb
+VueControleurGyromite : + VueControleurGyromite(Jeu _Jeu)
+VueControleurGyromite : - void ajouterEcouteurClavier()
+VueControleurGyromite : - void chargerLesIcones()
+VueControleurGyromite : - void placerLesComposantsGraphiques()
+VueControleurGyromite : - void mettreAJourAffichageJeu()
+VueControleurGyromite : - void mettreAJourAffichageMenu()
+VueControleurGyromite : - void mettreAJourAffichageMenuPrincipal()
+VueControleurGyromite : - void update(Observable o, Object arg)
+VueControleurGyromite : - ImageIcon chargerIcone(String urlIcone)
+VueControleurGyromite : - ImageIcon chargerIcone(String urlIcone, int x, int y, int w, int h)
+VueControleurGyromite : - ImageIcon chargerIcone(String urlIcone, int x, int y, int w, int h)
+VueControleurGyromite : - JLabel component_barMenu()
+VueControleurGyromite : - JPanel component_gameBoard()
+VueControleurGyromite : - void setMenuVisible(boolean visible)
+VueControleurGyromite : - void addButtons(JPanel panel)
+VueControleurGyromite : - String getHighScore(int level)
+
+Entite : + Entite(Jeu _jeu)
+Entite : + (a) boolean peutEtreEcrase()
+Entite : + (a) boolean peutServirDeSupport()
+Entite : + (a) boolean peutPermettreDeMonterDescendre()
+Entite : + (a) boolean peutEtreEcrase()
+Entite : + (a) boolean ecrase(Entite e)
+Entite : # Jeu jeu
+
+EntiteDynamique : - Entite ancienne_entite
+EntiteDynamique : # int speed
+EntiteDynamique : # Direction directionCourante
+EntiteDynamique : # boolean directionUpward
+EntiteDynamique : # boolean directionDescent
+EntiteDynamique : + EntiteDynamique(Jeu _jeu)
+EntiteDynamique : + boolean avancerDirectionChoisie(Direction d)
+EntiteDynamique : + Entite regarderDansLaDirection(Direction d)
+EntiteDynamique : + Entite regarderDansLaDirectionDouble(Direction d1, Direction d2)
+EntiteDynamique : + Entite regarderDansLaDirectionDistance(Direction d, int distance)
+EntiteDynamique : + Direction getDirectionCourante()
+EntiteDynamique : + void setDirectionCourante(Direction directionCourante)
+EntiteDynamique : + Entite getAncienne_entite()
+EntiteDynamique : + void setAncienne_entite(Entite ancienne_entite)
+EntiteDynamique : + Boolean getDirectionUpward()
+EntiteDynamique : + void setDirectionUpward(boolean directionUpward)
+EntiteDynamique : + Boolean getDirectionDescent()
+EntiteDynamique : + void setDirectionDescent(boolean directionDescent)
+EntiteDynamique : + Entite getHero()
+
+EntiteStatique : + EntiteStatique(Jeu _jeu)
+EntiteStatique : + boolean peutEtreEcrase()
+EntiteStatique : + boolean peutServirDeSupport()
+EntiteStatique : + boolean peutPermettreDeMonterDescendre()
+
+Bombe : + Bombe(Jeu _jeu)
+Bombe : + boolean peutEtreEcrase()
+Bombe : + boolean peutServirDeSupport()
+Bombe : + boolean peutPermettreDeMonterDescendre()
+Bombe : + boolean ecrase(Entite e)
+
+Bot : - Random r
+Bot : - boolean distrait
+Bot : + int time_sleep
+Bot : + Bot(Jeu _jeu)
+Bot : + boolean peutEtreEcrase()
+Bot : + boolean peutServirDeSupport()
+Bot : + boolean peutPermettreDeMonterDescendre()
+Bot : + boolean ecrase(Entite e)
+Bot : + boolean isDistrait()
+Bot : + void setDistrait(boolean distrait)
+Bot : + void decreaseSleepTime() 
+
+Colonne : + Colonne(Jeu _jeu, int _taille)
+Colonne : + int taille
+Colonne : + int restant
+Colonne : + boolean peutEtreEcrase()
+Colonne : + boolean peutServirDeSupport()
+Colonne : + boolean peutPermettreDeMonterDescendre()
+Colonne : + boolean ecrase(Entite e)
+Colonne : + boolean avancerDirectionChoisie(Direction d)
+
+Corde : + Corde(Jeu _jeu)
+Corde : + boolean peutPermettreDeMonterDescendre()
+Corde : + boolean ecrase(Entite e)
+Corde : + boolean peutEtreEcrase()
+
+Heros : + Heros(Jeu _jeu)
+Heros : + boolean peutEtreEcrase()
+Heros : + boolean peutServirDeSupport()
+Heros : + boolean peutPermettreDeMonterDescendre()
+Heros : + boolean ecrase(Entite e)
+
+Mur : + Mur(Jeu _jeu)
+Mur : + boolean ecrase(Entite e)
+
+Platform : + Platform(Jeu _jeu)
+Platform : + boolean ecrase(Entite e)
+
+PlatformV : + PlatformV(Jeu _jeu)
+PlatformV : + boolean ecrase(Entite e)
+
+Radis : + Radis(Jeu _jeu)
+Radis : + boolean peutEtreEcrase()
+Radis : + boolean peutServirDeSupport()
+Radis : + boolean peutPermettreDeMonterDescendre()
+Radis : + boolean ecrase(Entite e)
+
+
+Controle4Directions : - Direction directionCourante
+Controle4Directions : - Direction lastDirection
+Controle4Directions : - Controle4Directions c3d
+Controle4Directions : + Controle4Directions getInstance()
+Controle4Directions : + Controle4Directions reset()
+Controle4Directions : + void setDirectionCourante(Direction _directionCourante)
+Controle4Directions : + boolean realiserDeplacement()
+Controle4Directions : + void resetDirection()
+Controle4Directions : + Direction getDirection()
+
+
+ControleColonne : - Direction directionCourante
+ControleColonne : - ControleColonne c3d
+ControleColonne : - ArrayList<EntiteDynamique> lstEntitesDynamiquesInverse
+ControleColonne : + ControleColonne getInstance()
+ControleColonne : + ControleColonne reset()
+ControleColonne : + void setDirectionCourante()
+ControleColonne : + boolean realiserDeplacement()
+ControleColonne : + void addEntiteDynamique(EntiteDynamique ed)
+
+Gravite : - Gravite g
+Gravite : + Gravite getInstance()
+Gravite : + Gravite reset()
+Gravite : + boolean realiserDeplacement()
+
+IA : - int distanceVision
+IA : - IA iad
+IA : + IA getInstance()
+IA : + IA reset()
+IA : + boolean realiserDeplacement()
+IA : - Direction directionInverse(Direction d)
+IA : - void deplacementIA(EntiteDynamique bot, ArrayList<Direction> lstEntitesArroundDirection, ArrayList<Entite> lstEntitesArround)
+
+Ordonnanceur : - Jeu jeu
+Ordonnanceur : - ArrayList<RealisateurDeDeplacement> lstDeplacements
+Ordonnanceur : - long pause
+Ordonnanceur : + void add(RealisateurDeDeplacement deplacement)
+Ordonnanceur : + Ordonnanceur(Jeu _jeu)
+Ordonnanceur : + void start(long _pause)
+Ordonnanceur : + void reset()
+Ordonnanceur : + void run() 
+
+RealisateurDeDeplacement : # ArrayList<EntiteDynamique> lstEntitesDynamiques
+RealisateurDeDeplacement : # (a) boolean realiserDeplacement();
+RealisateurDeDeplacement : + void addEntiteDynamique(EntiteDynamique ed)
+RealisateurDeDeplacement : + void removeEntiteDynamique(EntiteDynamique ed)
+
+
+
+@enduml
