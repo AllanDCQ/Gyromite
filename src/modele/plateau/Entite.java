@@ -10,7 +10,6 @@ import modele.deplacements.Direction;
 public abstract class Entite {
     protected Jeu jeu;
 
-    private int current_sprite = 0;
     
     public Entite(Jeu _jeu) {
         jeu = _jeu;
